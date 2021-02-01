@@ -1,7 +1,6 @@
 # Fresh Meat Frontend
 
-**Backend git repository &darr;**
-https://github.com/naIlSeong/fresh-meat-backend
+**Backend git repository &rarr;** https://github.com/naIlSeong/fresh-meat-backend
 
 ---
 
