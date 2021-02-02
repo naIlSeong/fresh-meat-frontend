@@ -4,6 +4,7 @@ import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
 import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
+import { Helmet } from "react-helmet";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -22,6 +23,9 @@ export const NotFound = () => {
 
   return (
     <Container component="main" maxWidth="xs">
+      <Helmet>
+        <title>Fresh meat - Not found</title>
+      </Helmet>
       <div className={classes.paper}>
         <Typography variant="h2">Oops!</Typography>
         <Box paddingTop="24px">
