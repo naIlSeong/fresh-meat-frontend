@@ -1,12 +1,42 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
+import { makeStyles } from "@material-ui/core/styles";
+import Container from "@material-ui/core/Container";
+import Typography from "@material-ui/core/Typography";
+import Link from "@material-ui/core/Link";
+import Box from "@material-ui/core/Box";
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    height: "100%",
+    paddingTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+}));
 
 export const NotFound = () => {
+  const classes = useStyles();
+  const preventDefault = (event: React.SyntheticEvent) =>
+    event.preventDefault();
+
   return (
-    <Grid container direction="column" justify="center" alignItems="center">
-      <div>404</div>
-      <div>Not Found</div>
-      <div>This is not the page you are looking for T^T</div>
-    </Grid>
+    <Container component="main" maxWidth="xs">
+      <div className={classes.paper}>
+        <Typography variant="h2">Oops!</Typography>
+        <Box paddingTop="24px">
+          <Typography variant="h5">Not Found</Typography>
+        </Box>
+        <Box paddingTop="10px" paddingBottom="16px">
+          This is not the page you are looking for T^T
+        </Box>
+        <Box>
+          Go back to{" "}
+          <Link href="#" onClick={preventDefault} color="secondary">
+            Home
+          </Link>
+        </Box>
+      </div>
+    </Container>
   );
 };

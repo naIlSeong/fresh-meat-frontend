@@ -14,7 +14,8 @@ export const theme = createMuiTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          fontSize: "14px",
+          fontSize: "12px",
+          minHeight: "100vh",
         },
       },
     },
