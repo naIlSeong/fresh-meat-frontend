@@ -6,18 +6,19 @@
 
 ## Todo
 
-**Logged in**
+- [ ] Header
+- [x] Footer
+- [ ] Navigation?
+      </br>
+
+**Logged out**
 
 - [ ] Sign up **(/signup)**
 - [ ] Login **(/login)**
       </br>
 
-**Logged out**
+**Logged in**
 
-- [ ] Header
-- [ ] Footer
-- [ ] Navigation?
-      </br>
 - **User**
 
   - [ ] Update User **(/user/edit-profile)**
