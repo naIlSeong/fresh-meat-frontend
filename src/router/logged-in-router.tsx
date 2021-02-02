@@ -8,7 +8,7 @@ export const LoggedInRouter = () => {
       <div>Logged in now</div>
       <Button
         variant="contained"
-        color="primary"
+        color="secondary"
         onClick={() => isLoggedInVar(false)}
       >
         Logout
