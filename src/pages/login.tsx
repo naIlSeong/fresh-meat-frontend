@@ -12,6 +12,9 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { login, loginVariables } from "../__generated__/login";
 import { Helmet } from "react-helmet";
+import { CircularProgress } from "@material-ui/core";
+import { FormError } from "../components/form-error";
+import { SubmitButton } from "../components/button";
 
 type IForm = {
   email: string;
@@ -56,9 +59,6 @@ const useStyles = makeStyles((theme) => ({
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
 }));
 
 export const Login = () => {
@@ -75,10 +75,8 @@ export const Login = () => {
     mode: "onChange",
   });
 
-  const { isValid } = formState;
-
+  // Delete
   console.log(watch());
-  console.log(isValid);
 
   const onSubmit = () => {
     const { email, password } = getValues();
@@ -98,14 +96,15 @@ export const Login = () => {
     const {
       login: { ok, error },
     } = data;
+    // TODO
     console.log("ok : ", ok);
     console.log("error : ", error);
   };
 
-  const [loginMutation, { data, error }] = useMutation<login, loginVariables>(
-    LOGIN,
-    { onCompleted }
-  );
+  const [loginMutation, { data: loginOutput, loading }] = useMutation<
+    login,
+    loginVariables
+  >(LOGIN, { onCompleted });
 
   return (
     <Container component="main" maxWidth="xs">
@@ -151,20 +150,21 @@ export const Login = () => {
             autoComplete="current-password"
             inputRef={register({ required: true, minLength: 8 })}
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="secondary"
-            className={classes.submit}
-            disabled={!isValid}
-          >
-            Login
-          </Button>
+          {errors.password?.type === "minLength" && (
+            <FormError errorMessage={"Password must be at least 8 chars"} />
+          )}
+          <SubmitButton
+            message="Login"
+            validate={!formState.isValid}
+            loading={loading}
+          />
+          {loginOutput?.login.error && (
+            <FormError errorMessage={loginOutput.login.error} />
+          )}
           <Grid container>
             <Grid item>
               Don't have an account?{" "}
-              <Link href="/signup" variant="body2" color="textPrimary">
+              <Link href="/signup" variant="body2" color="secondary">
                 {"Sign Up"}
               </Link>
             </Grid>
