@@ -1,6 +1,5 @@
 import React from "react";
 import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
@@ -12,7 +11,6 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { login, loginVariables } from "../__generated__/login";
 import { Helmet } from "react-helmet";
-import { CircularProgress } from "@material-ui/core";
 import { FormError } from "../components/form-error";
 import { SubmitButton } from "../components/button";
 
