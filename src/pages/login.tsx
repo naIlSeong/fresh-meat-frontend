@@ -6,8 +6,21 @@ import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+
+const CssTextField = withStyles({
+  root: {
+    "& label.Mui-focused": {
+      color: "white",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&.Mui-focused fieldset": {
+        borderColor: "green",
+      },
+    },
+  },
+})(TextField);
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -43,7 +56,7 @@ export const Login = () => {
           Welcome back!
         </Typography>
         <form className={classes.form} noValidate>
-          <TextField
+          <CssTextField
             variant="outlined"
             margin="normal"
             required
@@ -54,7 +67,7 @@ export const Login = () => {
             autoComplete="email"
             autoFocus
           />
-          <TextField
+          <CssTextField
             variant="outlined"
             margin="normal"
             required
