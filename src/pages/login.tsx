@@ -8,6 +8,24 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
+import { useForm } from "react-hook-form";
+import { gql, useMutation } from "@apollo/client";
+import { login, loginVariables } from "../__generated__/login";
+import { Helmet } from "react-helmet";
+
+type IForm = {
+  email: string;
+  password: string;
+};
+
+const LOGIN = gql`
+  mutation login($input: LoginDto!) {
+    login(input: $input) {
+      ok
+      error
+    }
+  }
+`;
 
 const CssTextField = withStyles({
   root: {
@@ -46,8 +64,39 @@ const useStyles = makeStyles((theme) => ({
 export const Login = () => {
   const classes = useStyles();
 
+  const { register, handleSubmit, getValues } = useForm<IForm>({});
+  const onSubmit = () => {
+    const { email, password } = getValues();
+    console.log("email : ", email);
+    console.log("password : ", password);
+    loginMutation({
+      variables: {
+        input: {
+          email,
+          password,
+        },
+      },
+    });
+  };
+
+  const onCompleted = (data: login) => {
+    const {
+      login: { ok, error },
+    } = data;
+    console.log("ok : ", ok);
+    console.log("error : ", error);
+  };
+
+  const [loginMutation, { data, error }] = useMutation<login, loginVariables>(
+    LOGIN,
+    { onCompleted }
+  );
+
   return (
     <Container component="main" maxWidth="xs">
+      <Helmet>
+        <title>Fresh Meat - Login</title>
+      </Helmet>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -55,7 +104,11 @@ export const Login = () => {
         <Typography component="h1" variant="h5">
           Welcome back!
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <CssTextField
             variant="outlined"
             margin="normal"
@@ -66,6 +119,7 @@ export const Login = () => {
             name="email"
             autoComplete="email"
             autoFocus
+            inputRef={register}
           />
           <CssTextField
             variant="outlined"
@@ -77,6 +131,7 @@ export const Login = () => {
             type="password"
             id="password"
             autoComplete="current-password"
+            inputRef={register}
           />
           <Button
             type="submit"

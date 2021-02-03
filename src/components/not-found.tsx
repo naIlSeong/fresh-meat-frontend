@@ -22,7 +22,7 @@ export const NotFound = () => {
   return (
     <Container component="main" maxWidth="xs">
       <Helmet>
-        <title>Fresh meat - Not found</title>
+        <title>Fresh Meat - Not found</title>
       </Helmet>
       <div className={classes.paper}>
         <Typography variant="h2">Oops!</Typography>
