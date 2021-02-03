@@ -64,7 +64,22 @@ const useStyles = makeStyles((theme) => ({
 export const Login = () => {
   const classes = useStyles();
 
-  const { register, handleSubmit, getValues } = useForm<IForm>({});
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    errors,
+    formState,
+    watch,
+  } = useForm<IForm>({
+    mode: "onChange",
+  });
+
+  const { isValid } = formState;
+
+  console.log(watch());
+  console.log(isValid);
+
   const onSubmit = () => {
     const { email, password } = getValues();
     console.log("email : ", email);
@@ -119,7 +134,10 @@ export const Login = () => {
             name="email"
             autoComplete="email"
             autoFocus
-            inputRef={register}
+            inputRef={register({
+              required: true,
+              pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+            })}
           />
           <CssTextField
             variant="outlined"
@@ -131,7 +149,7 @@ export const Login = () => {
             type="password"
             id="password"
             autoComplete="current-password"
-            inputRef={register}
+            inputRef={register({ required: true, minLength: 8 })}
           />
           <Button
             type="submit"
@@ -139,8 +157,9 @@ export const Login = () => {
             variant="contained"
             color="secondary"
             className={classes.submit}
+            disabled={!isValid}
           >
-            Log In
+            Login
           </Button>
           <Grid container>
             <Grid item>
