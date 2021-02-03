@@ -2,13 +2,13 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    height: "100%",
+    height: "100vh",
     paddingTop: theme.spacing(8),
     display: "flex",
     flexDirection: "column",
@@ -18,8 +18,6 @@ const useStyles = makeStyles((theme) => ({
 
 export const NotFound = () => {
   const classes = useStyles();
-  const preventDefault = (event: React.SyntheticEvent) =>
-    event.preventDefault();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -36,9 +34,11 @@ export const NotFound = () => {
         </Box>
         <Box>
           Go back to{" "}
-          <Link href="#" onClick={preventDefault} color="secondary">
-            Home
-          </Link>
+          <Box component="span" color="secondary">
+            <Link to="/" style={{ color: "#4c8c4a" }}>
+              Home
+            </Link>
+          </Box>
         </Box>
       </div>
     </Container>
