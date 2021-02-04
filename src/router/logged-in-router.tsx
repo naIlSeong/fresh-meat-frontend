@@ -1,18 +1,21 @@
 import React from "react";
-import { isLoggedInVar } from "../apollo";
-import Button from "@material-ui/core/Button";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { Footer } from "../components/footer";
+import { NotFound } from "../components/not-found";
+import { Home } from "../pages/home";
 
 export const LoggedInRouter = () => {
   return (
-    <div>
-      <div>Logged in now</div>
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => isLoggedInVar(false)}
-      >
-        Logout
-      </Button>
-    </div>
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <Home />
+        </Route>
+        <Route>
+          <NotFound />
+        </Route>
+      </Switch>
+      <Footer />
+    </Router>
   );
 };

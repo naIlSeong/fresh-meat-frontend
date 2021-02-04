@@ -10,9 +10,10 @@ import { LoginDto } from "./globalTypes";
 // ====================================================
 
 export interface login_login {
-  __typename: "CommonOutput";
+  __typename: "LoginOutput";
   ok: boolean | null;
   error: string | null;
+  sessionId: string | null;
 }
 
 export interface login {

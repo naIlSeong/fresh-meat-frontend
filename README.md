@@ -13,7 +13,7 @@
 
 **Logged out**
 
-- [ ] Sign up **(/signup)**
+- [x] Sign up **(/signup)**
 - [ ] Login **(/login)**
       </br>
 

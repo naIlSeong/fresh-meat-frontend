@@ -5,12 +5,15 @@ import { client } from "./apollo";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { HelmetProvider } from "react-helmet-async";
 
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <CssBaseline />
-      <App />
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
     </ApolloProvider>
   </React.StrictMode>,
   document.getElementById("root")

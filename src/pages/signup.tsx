@@ -9,7 +9,7 @@ import {
   Typography,
   withStyles,
 } from "@material-ui/core";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import { SubmitButton } from "../components/button";
 import { gql, useMutation } from "@apollo/client";

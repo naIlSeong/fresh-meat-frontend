@@ -9,10 +9,12 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
-import { login, loginVariables } from "../__generated__/login";
-import { Helmet } from "react-helmet";
 import { FormError } from "../components/form-error";
 import { SubmitButton } from "../components/button";
+import { login, loginVariables } from "../__generated__/login";
+import { isLoggedInVar } from "../apollo";
+import { useHistory } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 type IForm = {
   email: string;
@@ -24,6 +26,7 @@ const LOGIN = gql`
     login(input: $input) {
       ok
       error
+      sessionId
     }
   }
 `;
@@ -61,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Login = () => {
   const classes = useStyles();
+  const history = useHistory();
 
   const {
     register,
@@ -68,18 +72,12 @@ export const Login = () => {
     getValues,
     errors,
     formState,
-    watch,
   } = useForm<IForm>({
     mode: "onChange",
   });
 
-  // Delete
-  console.log(watch());
-
   const onSubmit = () => {
     const { email, password } = getValues();
-    console.log("email : ", email);
-    console.log("password : ", password);
     loginMutation({
       variables: {
         input: {
@@ -92,11 +90,13 @@ export const Login = () => {
 
   const onCompleted = (data: login) => {
     const {
-      login: { ok, error },
+      login: { ok },
     } = data;
-    // TODO
-    console.log("ok : ", ok);
-    console.log("error : ", error);
+    if (ok) {
+      // TODO
+      // isLoggedInVar(ok);
+      // history.push("/");
+    }
   };
 
   const [loginMutation, { data: loginOutput, loading }] = useMutation<
