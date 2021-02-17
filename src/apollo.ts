@@ -8,8 +8,8 @@ import {
 export const isLoggedInVar = makeVar(false);
 
 const link = createHttpLink({
-  uri: "http://127.0.0.1:4000/graphql",
-  credentials: "same-origin",
+  uri: "https://localhost:4000/graphql",
+  credentials: "include",
 });
 
 export const client = new ApolloClient({

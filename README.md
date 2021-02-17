@@ -36,3 +36,15 @@
 
   - [ ] Edit Progress?
   - [ ] Create Bidding
+
+---
+
+## Memo
+
+**Problem**
+Can't save cookie received from backend
+
+**Solution**
+
+1. http &rarr; https (Frontend & Backend)
+2. Cookie options &rarr; same-site: none; secure;
