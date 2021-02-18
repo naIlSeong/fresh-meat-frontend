@@ -6,7 +6,7 @@
 
 ## Todo
 
-- [ ] Header
+- [x] Header
 - [x] Footer
 - [ ] Navigation?
       </br>
@@ -14,7 +14,7 @@
 **Logged out**
 
 - [x] Sign up **(/signup)**
-- [ ] Login **(/login)**
+- [x] Login **(/login)**
       </br>
 
 **Logged in**
@@ -23,7 +23,7 @@
 
   - [ ] Update User **(/user/edit-profile)**
   - [ ] Delete User **(/user/withdrawal)**
-  - [ ] Logout
+  - [x] Logout
   - [ ] User Detail **(/user/:username)**
 
 - **Product**
@@ -43,7 +43,7 @@
 
 `js-cookie` &larr; Using cookie
 
-**Issue #1**
+#### **Issue #1**
 
 Can't save cookie received from backend
 
@@ -52,7 +52,7 @@ Can't save cookie received from backend
 1. `http` &rarr; `https` (Frontend & Backend)
 2. Cookie options &rarr; `same-site: none; secure;`
 
-**Issue #2**
+#### **Issue #2**
 
 After changing backend from http to https
 
