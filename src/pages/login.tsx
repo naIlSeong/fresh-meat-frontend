@@ -12,9 +12,9 @@ import { gql, useMutation } from "@apollo/client";
 import { FormError } from "../components/form-error";
 import { SubmitButton } from "../components/button";
 import { login, loginVariables } from "../__generated__/login";
-import { isLoggedInVar } from "../apollo";
 import { useHistory } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { isLoggedInVar } from "../apollo";
 
 type IForm = {
   email: string;
@@ -90,12 +90,13 @@ export const Login = () => {
 
   const onCompleted = (data: login) => {
     const {
-      login: { ok },
+      login: { ok, sessionId },
     } = data;
     if (ok) {
-      // TODO
-      // isLoggedInVar(ok);
-      // history.push("/");
+      if (sessionId) {
+        isLoggedInVar(true);
+        history.push("/");
+      }
     }
   };
 

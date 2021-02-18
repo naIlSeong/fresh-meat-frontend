@@ -41,6 +41,8 @@
 
 ## Memo
 
+js-cookie &larr; Using cookie
+
 **Problem**
 Can't save cookie received from backend
 

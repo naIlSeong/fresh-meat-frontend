@@ -4,8 +4,10 @@ import {
   InMemoryCache,
   makeVar,
 } from "@apollo/client";
+import Cookies from "js-cookie";
 
-export const isLoggedInVar = makeVar(false);
+const sessionId = Cookies.get("connect.sid");
+export const isLoggedInVar = makeVar(Boolean(sessionId));
 
 const link = createHttpLink({
   uri: "https://localhost:4000/graphql",

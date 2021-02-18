@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Redirect,
-  Route,
-  Switch,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Footer } from "../components/footer";
 import { NotFound } from "../components/not-found";
 import { Login } from "../pages/login";
@@ -17,11 +12,8 @@ export const LoggedOutRouter = () => {
         <Route path="/signup" exact>
           <Signup />
         </Route>
-        <Route path="/login" exact>
-          <Login />
-        </Route>
         <Route path="/" exact>
-          <Redirect to="/login" />
+          <Login />
         </Route>
         <Route>
           <NotFound />
