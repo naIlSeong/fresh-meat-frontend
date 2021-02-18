@@ -94,7 +94,7 @@ export const Signup = () => {
       createUser: { ok },
     } = data;
     if (ok) {
-      history.push("/login");
+      history.push("/");
     }
   };
 
