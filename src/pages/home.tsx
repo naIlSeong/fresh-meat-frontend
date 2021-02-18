@@ -1,20 +1,10 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
-import { me } from "../__generated__/me";
 import { Helmet } from "react-helmet-async";
 import { Container } from "@material-ui/core";
-
-const ME = gql`
-  query me {
-    me {
-      username
-    }
-  }
-`;
+import { useMe } from "../hooks/use-me";
 
 export const Home = () => {
-  const { data, loading } = useQuery<me>(ME);
-  console.log(loading, data);
+  const { data, loading } = useMe();
 
   return (
     <Container component="main" maxWidth="xs">
@@ -22,7 +12,7 @@ export const Home = () => {
         <title>Fresh Meat</title>
       </Helmet>
       <div>Home</div>
-      {/* <div>{!loading && data?.me.username}</div> */}
+      <div>{!loading && data?.me.username}</div>
     </Container>
   );
 };

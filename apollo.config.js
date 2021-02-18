@@ -4,7 +4,8 @@ module.exports = {
     includes: ["./src/**/*.tsx"],
     service: {
       name: "fresh-meat-backend",
-      url: "http://127.0.0.1:4000/graphql",
+      url: "https://localhost:4000/graphql",
+      skipSSLValidation: true,
     },
   },
 };
