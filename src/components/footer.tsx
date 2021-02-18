@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(8),
   },
   footer: {
-    padding: theme.spacing(3, 2),
+    paddingBottom: theme.spacing(2),
     marginTop: "auto",
   },
 }));
