@@ -19,6 +19,14 @@
 
 **Logged in**
 
+- **Home**
+
+  - [ ] Add Image
+  - [ ] Create Bidding
+  - [ ] Update Bidding
+  - [ ] VIEW Button
+  - [ ] Upload Product Button
+
 - **User**
 
   - [ ] Update User **(/user/edit-profile)**

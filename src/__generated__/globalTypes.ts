@@ -13,6 +13,10 @@ export interface CreateUserDto {
   password: string;
 }
 
+export interface GetAllProductsDto {
+  page?: number | null;
+}
+
 export interface LoginDto {
   email: string;
   password: string;
