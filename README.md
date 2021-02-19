@@ -24,8 +24,8 @@
   - [x] Add Image
   - [ ] Create Bidding
   - [ ] Update Bidding
-  - [ ] VIEW Button
-  - [ ] Upload Product Button
+  - [x] VIEW Button
+  - [x] Upload Product Button
 
 - **User**
 

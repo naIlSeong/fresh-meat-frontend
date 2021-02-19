@@ -20,6 +20,8 @@ import {
   getInProgressProducts,
   getInProgressProductsVariables,
 } from "../__generated__/getInProgressProducts";
+import { useHistory } from "react-router-dom";
+import indigo from "@material-ui/core/colors/indigo";
 
 const GET_IN_PROGRESS_PRODUCTS = gql`
   query getInProgressProducts($input: GetAllProductsDto!) {
@@ -102,10 +104,24 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     padding: theme.spacing(20),
   },
+  uploadContainer: {
+    display: "flex",
+    justifyContent: "flex-end",
+    marginTop: theme.spacing(4),
+  },
+  uploadButton: {
+    backgroundColor: indigo[900],
+    color: "white",
+    minWidth: "100px",
+    "&.MuiButton-root:hover": {
+      backgroundColor: "#000051",
+    },
+  },
 }));
 
 export const Home = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [tab, setTab] = useState(true);
   const [inProgressPage, setInProgressPage] = useState(1);
   const [waitingPage, setWaitingPage] = useState(1);
@@ -175,6 +191,17 @@ export const Home = () => {
               </Grid>
             </Grid>
           </Container>
+          <Container className={classes.uploadContainer}>
+            <Button
+              className={classes.uploadButton}
+              variant={"contained"}
+              onClick={() => {
+                history.push("/product/new");
+              }}
+            >
+              Upload
+            </Button>
+          </Container>
         </div>
 
         {/* Product Card */}
@@ -235,7 +262,13 @@ export const Home = () => {
                             </Container>
                           </CardContent>
                           <CardActions>
-                            <Button size="small" color="primary">
+                            <Button
+                              size="small"
+                              color="primary"
+                              onClick={() => {
+                                history.push(`/product/${product.id}`);
+                              }}
+                            >
                               View
                             </Button>
                             <Button size="small" color="primary">
@@ -355,7 +388,13 @@ export const Home = () => {
                             </Container>
                           </CardContent>
                           <CardActions>
-                            <Button size="small" color="primary">
+                            <Button
+                              size="small"
+                              color="primary"
+                              onClick={() => {
+                                history.push(`/product/${product.id}`);
+                              }}
+                            >
                               View
                             </Button>
                             <Button size="small" color="primary">
