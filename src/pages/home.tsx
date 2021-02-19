@@ -22,6 +22,12 @@ import {
 } from "../__generated__/getInProgressProducts";
 import { useHistory } from "react-router-dom";
 import indigo from "@material-ui/core/colors/indigo";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 const GET_IN_PROGRESS_PRODUCTS = gql`
   query getInProgressProducts($input: GetAllProductsDto!) {
@@ -159,6 +165,16 @@ export const Home = () => {
     updateWatingProducts();
   }, [updateInProgressProducts, updateWatingProducts]);
 
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <React.Fragment>
       <Helmet>
@@ -247,6 +263,9 @@ export const Home = () => {
                             <Typography variant="subtitle1">
                               {product.bidPrice} ₩
                             </Typography>
+
+                            {/* TODO : Display remaining time */}
+
                             <Container
                               style={{
                                 minHeight: "50px",
@@ -271,9 +290,64 @@ export const Home = () => {
                             >
                               View
                             </Button>
-                            <Button size="small" color="primary">
-                              Edit
+                            <Button
+                              size="small"
+                              color="primary"
+                              onClick={handleClickOpen}
+                            >
+                              Bidding
                             </Button>
+                            <Dialog
+                              open={open}
+                              onClose={handleClose}
+                              aria-labelledby="form-dialog-title"
+                            >
+                              <DialogTitle id="form-dialog-title">
+                                Higher bid on a product
+                              </DialogTitle>
+                              <DialogContent>
+                                <DialogContentText>
+                                  The current price is{" "}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {product.bidPrice}
+                                  </span>{" "}
+                                  won. The bid price must be more than{" "}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {product.bidPrice}
+                                  </span>{" "}
+                                  won.
+                                </DialogContentText>
+                                <DialogContentText>
+                                  If you are sure, Please type more than{" "}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {product.bidPrice}
+                                  </span>{" "}
+                                  to higher bid.
+                                </DialogContentText>
+                                <TextField
+                                  autoFocus
+                                  margin="dense"
+                                  id="confirm"
+                                  label={`Current price: ${product.bidPrice}`}
+                                  type="text"
+                                  fullWidth
+                                />
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    // TODO : upda mutation
+                                    // TODO : Display error
+                                  }}
+                                  color="primary"
+                                >
+                                  Bidding
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                           </CardActions>
                         </Card>
                       </Grid>
@@ -397,9 +471,60 @@ export const Home = () => {
                             >
                               View
                             </Button>
-                            <Button size="small" color="primary">
+                            <Button
+                              size="small"
+                              color="primary"
+                              onClick={handleClickOpen}
+                            >
                               Bidding
                             </Button>
+                            <Dialog
+                              open={open}
+                              onClose={handleClose}
+                              aria-labelledby="form-dialog-title"
+                            >
+                              <DialogTitle id="form-dialog-title">
+                                Bid on a product
+                              </DialogTitle>
+                              <DialogContent>
+                                <DialogContentText>
+                                  The starting price is{" "}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {product.startPrice}
+                                  </span>{" "}
+                                  won. Are you sure?
+                                </DialogContentText>
+                                <DialogContentText>
+                                  If you are sure, Please type{" "}
+                                  <span style={{ fontWeight: "bold" }}>
+                                    {product.startPrice}
+                                  </span>{" "}
+                                  to bid.
+                                </DialogContentText>
+                                <TextField
+                                  autoFocus
+                                  margin="dense"
+                                  id="confirm"
+                                  label={product.startPrice}
+                                  type="text"
+                                  fullWidth
+                                />
+                              </DialogContent>
+                              <DialogActions>
+                                <Button onClick={handleClose} color="primary">
+                                  Cancel
+                                </Button>
+                                <Button
+                                  onClick={() => {
+                                    // TODO : createBidding mutation
+                                    // TODO : Display error
+                                  }}
+                                  color="primary"
+                                >
+                                  Bidding
+                                </Button>
+                              </DialogActions>
+                            </Dialog>
                           </CardActions>
                         </Card>
                       </Grid>
