@@ -21,7 +21,7 @@
 
 - **Home**
 
-  - [ ] Add Image
+  - [x] Add Image
   - [ ] Create Bidding
   - [ ] Update Bidding
   - [ ] VIEW Button
@@ -47,6 +47,8 @@
 
 ---
 
+---
+
 ## Memo
 
 `js-cookie` &larr; Using cookie
@@ -59,6 +61,8 @@ Can't save cookie received from backend
 
 1. `http` &rarr; `https` (Frontend & Backend)
 2. Cookie options &rarr; `same-site: none; secure;`
+
+---
 
 #### **Issue #2**
 
@@ -91,3 +95,29 @@ module.exports = {
 ```
 
 Docs: https://www.apollographql.com/docs/devtools/apollo-config/
+
+---
+
+#### **Issue #3**
+
+Can not open object url loaded from AWS S3
+
+**Solution**
+
+1. Update the bucket policy like:
+
+```
+{
+    "Version": "2012-10-17",
+    "Id": "Policy1613754235370",
+    "Statement": [
+        {
+            "Sid": "Stmt1613754220694",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::<YOUR_BUCKET_NAME>/*"
+        }
+    ]
+}
+```

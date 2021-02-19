@@ -141,7 +141,6 @@ export const Home = () => {
   useEffect(() => {
     updateInProgressProducts();
     updateWatingProducts();
-    console.log("Updated!");
   }, [updateInProgressProducts, updateWatingProducts]);
 
   return (
@@ -203,7 +202,11 @@ export const Home = () => {
                         <Card className={classes.card}>
                           <CardMedia
                             className={classes.cardImage}
-                            image="https://source.unsplash.com/random"
+                            image={
+                              product.pictures.length !== 0
+                                ? product.pictures[0].url
+                                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+                            }
                             title="Image title"
                           />
                           <CardContent className={classes.cardContent}>
@@ -319,7 +322,11 @@ export const Home = () => {
                         <Card className={classes.card}>
                           <CardMedia
                             className={classes.cardImage}
-                            image="https://source.unsplash.com/random"
+                            image={
+                              product.pictures.length !== 0
+                                ? product.pictures[0].url
+                                : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+                            }
                             title="Image title"
                           />
                           <CardContent className={classes.cardContent}>
