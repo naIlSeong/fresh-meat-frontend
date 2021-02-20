@@ -22,8 +22,8 @@
 - **Home**
 
   - [x] Add Image
-  - [ ] Create Bidding
-  - [ ] Update Bidding
+  - [x] Create Bidding
+  - [x] Update Bidding
   - [x] VIEW Button
   - [x] Upload Product Button
 
@@ -43,7 +43,6 @@
   - [ ] Edit Product **(/product/:id/update)**
 
   - [ ] Edit Progress?
-  - [ ] Create Bidding
 
 ---
 

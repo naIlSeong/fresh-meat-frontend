@@ -7,6 +7,11 @@
 // START Enums and Input Objects
 //==============================================================
 
+export interface CreateBiddingDto {
+  productId: number;
+  startPrice: number;
+}
+
 export interface CreateUserDto {
   username: string;
   email: string;
@@ -20,6 +25,11 @@ export interface GetAllProductsDto {
 export interface LoginDto {
   email: string;
   password: string;
+}
+
+export interface UpdateBiddingDto {
+  productId: number;
+  bidPrice: number;
 }
 
 //==============================================================
