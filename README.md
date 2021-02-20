@@ -27,6 +27,8 @@
   - [x] VIEW Button
   - [x] Upload Product Button
 
+  - [ ] Debug : Input value validate
+
 - **User**
 
   - [ ] Update User **(/user/edit-profile)**

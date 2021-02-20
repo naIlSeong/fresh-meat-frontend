@@ -37,10 +37,17 @@ import {
   updateBidding,
   updateBiddingVariables,
 } from "../__generated__/updateBidding";
+import Countdown from "react-countdown";
 
 type IForm = {
   bidPrice: string;
 };
+
+interface IRenderer {
+  minutes: number;
+  seconds: number;
+  completed: boolean;
+}
 
 const GET_IN_PROGRESS_PRODUCTS = gql`
   query getInProgressProducts($input: GetAllProductsDto!) {
@@ -251,6 +258,23 @@ export const Home = () => {
     setOpen(false);
   };
 
+  const renderer = ({ minutes, seconds, completed }: IRenderer) => {
+    if (completed) {
+      // Render a completed state
+      return (
+        <span style={{ color: "#f44336", fontSize: "14px" }}>Finished!</span>
+      );
+    } else {
+      // Render a countdown
+      return (
+        <span style={{ color: "#ff7961", fontSize: "14px" }}>
+          {minutes < 10 ? `0${minutes}m` : `${minutes}m`}{" "}
+          {seconds < 10 ? `0${seconds}s` : `${seconds}s`}
+        </span>
+      );
+    }
+  };
+
   const IN_PROGRESS_TEXT_1 = (
     <span>
       The Current price is{" "}
@@ -367,6 +391,11 @@ export const Home = () => {
                             >
                               {product.productName}
                             </Typography>
+                            <Countdown
+                              date={product.remainingTime}
+                              renderer={renderer}
+                            />
+
                             <Typography variant="subtitle1">
                               {product.bidPrice} ₩
                             </Typography>
@@ -662,7 +691,11 @@ export const Home = () => {
                     autoFocus
                     margin="dense"
                     id="bidPrice"
-                    label={`Starting price: ${startPrice}`}
+                    label={
+                      isInProgress === true
+                        ? `Current price: ${startPrice}`
+                        : `Starting price: ${startPrice}`
+                    }
                     type="text"
                     fullWidth
                     name="bidPrice"
