@@ -14,6 +14,8 @@ import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { updateUser, updateUserVariables } from "../__generated__/updateUser";
 import { useLogout } from "../hooks/use-logout";
+import Button from "@material-ui/core/Button";
+import { useHistory } from "react-router-dom";
 
 type IForm = {
   username?: string;
@@ -52,6 +54,14 @@ const useStyles = makeStyles((theme) => ({
     width: "100%", // Fix IE 11 issue.
     marginTop: theme.spacing(1),
   },
+  deleteButton: {
+    margin: theme.spacing(3, 0, 2),
+    backgroundColor: "#9a0007",
+    color: "white",
+    "&.MuiButton-root:hover": {
+      backgroundColor: "#650000",
+    },
+  },
 }));
 
 const CssTextField = withStyles({
@@ -70,6 +80,7 @@ const CssTextField = withStyles({
 export const EditAccount = () => {
   const classes = useStyles();
   const { data, loading } = useMe();
+  const history = useHistory();
   const [logoutMutation] = useLogout();
   const [samePassword, setSamePassword] = useState(false);
 
@@ -296,6 +307,18 @@ export const EditAccount = () => {
                     </div>
                   )}
                 </form>
+                <Button
+                  type="button"
+                  fullWidth
+                  variant="contained"
+                  className={classes.deleteButton}
+                  onClick={() => {
+                    history.push("/delete-account");
+                    window.scrollTo(0, 0);
+                  }}
+                >
+                  Delete account
+                </Button>
               </div>
             </Container>
           )}
