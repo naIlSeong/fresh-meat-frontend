@@ -9,7 +9,6 @@ import Cookies from "js-cookie";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useMe } from "../hooks/use-me";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 type IProps = {
   title: string;

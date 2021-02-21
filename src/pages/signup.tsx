@@ -146,6 +146,9 @@ export const Signup = () => {
               pattern: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
             })}
           />
+          {errors.email?.type === "pattern" && (
+            <FormError errorMessage={"Check email pattern"} />
+          )}
           <CssTextField
             margin="normal"
             variant="outlined"
