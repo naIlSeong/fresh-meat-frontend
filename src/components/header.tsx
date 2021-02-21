@@ -9,10 +9,21 @@ import Cookies from "js-cookie";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useMe } from "../hooks/use-me";
+import { gql, useMutation } from "@apollo/client";
+import { logout } from "../__generated__/logout";
 
 type IProps = {
   title: string;
 };
+
+const LOGOUT = gql`
+  mutation logout {
+    logout {
+      ok
+      error
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -30,6 +41,22 @@ export const Header = ({ title }: IProps) => {
   const history = useHistory();
   const classes = useStyles();
   const { data, loading } = useMe();
+
+  const onCompleted = (data: logout) => {
+    const {
+      logout: { ok },
+    } = data;
+    if (ok) {
+      console.log("Deleted");
+      isLoggedInVar(false);
+      history.push("/");
+      Cookies.remove("connect.sid");
+    }
+  };
+
+  const [logoutMutation] = useMutation<logout>(LOGOUT, {
+    onCompleted,
+  });
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -104,9 +131,7 @@ export const Header = ({ title }: IProps) => {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              Cookies.remove("connect.sid");
-              isLoggedInVar(false);
-              history.push("/");
+              logoutMutation();
             }}
           >
             Logout
