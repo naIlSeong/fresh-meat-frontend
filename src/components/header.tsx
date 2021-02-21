@@ -4,26 +4,14 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { useHistory } from "react-router-dom";
-import { isLoggedInVar } from "../apollo";
-import Cookies from "js-cookie";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useMe } from "../hooks/use-me";
-import { gql, useMutation } from "@apollo/client";
-import { logout } from "../__generated__/logout";
+import { useLogout } from "../hooks/use-logout";
 
 type IProps = {
   title: string;
 };
-
-const LOGOUT = gql`
-  mutation logout {
-    logout {
-      ok
-      error
-    }
-  }
-`;
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -41,22 +29,7 @@ export const Header = ({ title }: IProps) => {
   const history = useHistory();
   const classes = useStyles();
   const { data, loading } = useMe();
-
-  const onCompleted = (data: logout) => {
-    const {
-      logout: { ok },
-    } = data;
-    if (ok) {
-      console.log("Deleted");
-      isLoggedInVar(false);
-      history.push("/");
-      Cookies.remove("connect.sid");
-    }
-  };
-
-  const [logoutMutation] = useMutation<logout>(LOGOUT, {
-    onCompleted,
-  });
+  const [logoutMutation] = useLogout();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -101,7 +74,7 @@ export const Header = ({ title }: IProps) => {
           size="small"
           onClick={handleClick}
         >
-          Account
+          Menu
         </Button>
         <Menu
           id="simple-menu"
@@ -117,6 +90,7 @@ export const Header = ({ title }: IProps) => {
               }
               if (!loading && data) {
                 history.push(`/user/${data.me.username}`);
+                handleClose();
               }
             }}
           >
@@ -125,6 +99,7 @@ export const Header = ({ title }: IProps) => {
           <MenuItem
             onClick={() => {
               history.push("/edit-account");
+              handleClose();
             }}
           >
             Edit account

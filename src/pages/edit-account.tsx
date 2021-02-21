@@ -13,7 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import { useForm } from "react-hook-form";
 import { gql, useMutation } from "@apollo/client";
 import { updateUser, updateUserVariables } from "../__generated__/updateUser";
-import { useHistory } from "react-router-dom";
+import { useLogout } from "../hooks/use-logout";
 
 type IForm = {
   username?: string;
@@ -69,8 +69,8 @@ const CssTextField = withStyles({
 
 export const EditAccount = () => {
   const classes = useStyles();
-  const history = useHistory();
   const { data, loading } = useMe();
+  const [logoutMutation] = useLogout();
   const [samePassword, setSamePassword] = useState(false);
 
   const {
@@ -89,81 +89,82 @@ export const EditAccount = () => {
       setSamePassword(true);
     } else {
       setSamePassword(false);
+
       // TODO
-      //   if (username && !email && !password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           username,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username && email === "" && password === "") {
+        updateUserMutation({
+          variables: {
+            input: {
+              username,
+            },
+          },
+        });
+      }
 
-      //   if (!username && email && !password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           email,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username === "" && email && password === "") {
+        updateUserMutation({
+          variables: {
+            input: {
+              email,
+            },
+          },
+        });
+      }
 
-      //   if (!username && !email && password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           password,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username === "" && email === "" && password) {
+        updateUserMutation({
+          variables: {
+            input: {
+              password,
+            },
+          },
+        });
+      }
 
-      //   if (username && email && !password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           username,
-      //           email,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username && email && password === "") {
+        updateUserMutation({
+          variables: {
+            input: {
+              username,
+              email,
+            },
+          },
+        });
+      }
 
-      //   if (username && !email && password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           username,
-      //           password,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username && email === "" && password) {
+        updateUserMutation({
+          variables: {
+            input: {
+              username,
+              password,
+            },
+          },
+        });
+      }
 
-      //   if (!username && email && password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           email,
-      //           password,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username === "" && email && password) {
+        updateUserMutation({
+          variables: {
+            input: {
+              email,
+              password,
+            },
+          },
+        });
+      }
 
-      //   if (username && email && password) {
-      //     updateUserMutation({
-      //       variables: {
-      //         input: {
-      //           username,
-      //           email,
-      //           password,
-      //         },
-      //       },
-      //     });
-      //   }
+      if (username && email && password) {
+        updateUserMutation({
+          variables: {
+            input: {
+              username,
+              email,
+              password,
+            },
+          },
+        });
+      }
     }
   };
 
@@ -172,8 +173,7 @@ export const EditAccount = () => {
       updateUser: { ok },
     } = data;
     if (ok) {
-      history.push("/");
-      window.location.reload();
+      logoutMutation();
     }
   };
 

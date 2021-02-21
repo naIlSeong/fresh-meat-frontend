@@ -31,7 +31,7 @@
 
 - **User**
 
-  - [ ] Update User **(/user/edit-profile)**
+  - [x] Update User **(/edit-account)**
   - [ ] Delete User **(/user/withdrawal)**
   - [x] Logout
   - [ ] User Detail **(/user/:username)**
