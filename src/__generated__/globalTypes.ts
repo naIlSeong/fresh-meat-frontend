@@ -32,6 +32,12 @@ export interface UpdateBiddingDto {
   bidPrice: number;
 }
 
+export interface UpdateUserDto {
+  username?: string | null;
+  email?: string | null;
+  password?: string | null;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMe } from "../hooks/use-me";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -11,13 +11,25 @@ import { SubmitButton } from "../components/button";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import TextField from "@material-ui/core/TextField";
 import { useForm } from "react-hook-form";
+import { gql, useMutation } from "@apollo/client";
+import { updateUser, updateUserVariables } from "../__generated__/updateUser";
+import { useHistory } from "react-router-dom";
 
 type IForm = {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+  username?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
 };
+
+const UPDATE_USER = gql`
+  mutation updateUser($input: UpdateUserDto!) {
+    updateUser(input: $input) {
+      ok
+      error
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   loading: {
@@ -57,7 +69,9 @@ const CssTextField = withStyles({
 
 export const EditAccount = () => {
   const classes = useStyles();
+  const history = useHistory();
   const { data, loading } = useMe();
+  const [samePassword, setSamePassword] = useState(false);
 
   const {
     register,
@@ -69,8 +83,106 @@ export const EditAccount = () => {
     mode: "onChange",
   });
 
-  // TODO
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    const { username, email, password, confirmPassword } = getValues();
+    if (password !== confirmPassword) {
+      setSamePassword(true);
+    } else {
+      setSamePassword(false);
+      // TODO
+      //   if (username && !email && !password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           username,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (!username && email && !password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           email,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (!username && !email && password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           password,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (username && email && !password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           username,
+      //           email,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (username && !email && password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           username,
+      //           password,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (!username && email && password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           email,
+      //           password,
+      //         },
+      //       },
+      //     });
+      //   }
+
+      //   if (username && email && password) {
+      //     updateUserMutation({
+      //       variables: {
+      //         input: {
+      //           username,
+      //           email,
+      //           password,
+      //         },
+      //       },
+      //     });
+      //   }
+    }
+  };
+
+  const onCompleted = (data: updateUser) => {
+    const {
+      updateUser: { ok },
+    } = data;
+    if (ok) {
+      history.push("/");
+      window.location.reload();
+    }
+  };
+
+  const [
+    updateUserMutation,
+    { data: updateUserOutput, loading: updateUserLoading },
+  ] = useMutation<updateUser, updateUserVariables>(UPDATE_USER, {
+    onCompleted,
+  });
 
   return (
     <React.Fragment>
@@ -167,17 +279,22 @@ export const EditAccount = () => {
                       />
                     </div>
                   )}
-
+                  {samePassword && (
+                    <FormError errorMessage={"Check password again"} />
+                  )}
                   <SubmitButton
                     message="Update"
                     validate={!formState.isValid}
-                    // TODO
-                    loading={false}
+                    loading={updateUserLoading}
                   />
                   {/* TODO */}
-                  {/* {loginOutput?.login.error && (
-                    <FormError errorMessage={loginOutput.login.error} />
-                  )} */}
+                  {updateUserOutput?.updateUser.error && (
+                    <div>
+                      <FormError
+                        errorMessage={updateUserOutput.updateUser.error}
+                      />
+                    </div>
+                  )}
                 </form>
               </div>
             </Container>
