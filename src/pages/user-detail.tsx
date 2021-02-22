@@ -76,19 +76,19 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    // marginTop: theme.spacing(1),
+    // marginBottom: theme.spacing(1),
     padding: 0,
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    // paddingTop: theme.spacing(1),
+    // paddingBottom: theme.spacing(1),
   },
   waitingItems: {
     display: "flex",
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    // marginTop: theme.spacing(1),
+    // marginBottom: theme.spacing(1),
     padding: 0,
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    // paddingTop: theme.spacing(1),
+    // paddingBottom: theme.spacing(1),
   },
   inProgressItems: {
     display: "flex",
@@ -181,8 +181,7 @@ export const UserDetail = () => {
                 {!loading && data?.userDetail.inProgress ? (
                   data.userDetail.inProgress.length === 0 ? (
                     <Container className={classes.noProduct}>
-                      <Typography variant="h3">Oops!</Typography>
-                      <Typography variant="subtitle1">
+                      <Typography variant="overline">
                         There is no product in progress 🦴
                       </Typography>
                     </Container>
@@ -230,8 +229,7 @@ export const UserDetail = () => {
                 {!loading && data?.userDetail.waiting ? (
                   data.userDetail.waiting.length === 0 ? (
                     <Container className={classes.noProduct}>
-                      <Typography variant="h3">Oops!</Typography>
-                      <Typography variant="subtitle1">
+                      <Typography variant="overline">
                         There is no product waiting for auction 🦴
                       </Typography>
                     </Container>

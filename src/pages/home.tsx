@@ -201,7 +201,6 @@ export const Home = () => {
   const { register, handleSubmit, getValues } = useForm<IForm>();
 
   const onCreateCompleted = (data: createBidding) => {
-    // TODO
     const {
       createBidding: { ok },
     } = data;

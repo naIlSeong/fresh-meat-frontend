@@ -34,7 +34,8 @@
   - [x] Update User **(/edit-account)**
   - [x] Delete User **(/user/withdrawal)**
   - [x] Logout
-  - [ ] User Detail **(/user/:username)**
+  - [x] User Detail **(/user/:username)**
+  - [ ] My Profile **(/my-profile)**
 
 - **Product**
 
