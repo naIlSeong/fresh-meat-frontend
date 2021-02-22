@@ -32,7 +32,7 @@
 - **User**
 
   - [x] Update User **(/edit-account)**
-  - [ ] Delete User **(/user/withdrawal)**
+  - [x] Delete User **(/user/withdrawal)**
   - [x] Logout
   - [ ] User Detail **(/user/:username)**
 

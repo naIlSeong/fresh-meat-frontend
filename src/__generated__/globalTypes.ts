@@ -18,6 +18,10 @@ export interface CreateUserDto {
   password: string;
 }
 
+export interface DeleteUserDto {
+  password: string;
+}
+
 export interface GetAllProductsDto {
   page?: number | null;
 }

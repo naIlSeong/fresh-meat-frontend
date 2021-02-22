@@ -8,10 +8,24 @@ import Typography from "@material-ui/core/Typography";
 import { useForm } from "react-hook-form";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import { gql, useMutation } from "@apollo/client";
+import { deleteUser, deleteUserVariables } from "../__generated__/deleteUser";
+import { useLogout } from "../hooks/use-logout";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import { FormError } from "../components/form-error";
 
 type IForm = {
   password: string;
 };
+
+const DELETE_USER = gql`
+  mutation deleteUser($input: DeleteUserDto!) {
+    deleteUser(input: $input) {
+      ok
+      error
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,9 +67,41 @@ const CssTextField = withStyles({
 
 export const DeleteAccount = () => {
   const classes = useStyles();
-  const { register, handleSubmit, getValues, errors } = useForm<IForm>();
+  const [logoutMutation] = useLogout();
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState,
+    errors,
+  } = useForm<IForm>({ mode: "onChange" });
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    const { password } = getValues();
+    deleteUserMutation({
+      variables: {
+        input: {
+          password,
+        },
+      },
+    });
+  };
+
+  const onCompleted = (data: deleteUser) => {
+    const {
+      deleteUser: { ok },
+    } = data;
+    if (ok) {
+      logoutMutation();
+    }
+  };
+
+  const [
+    deleteUserMutation,
+    { data: deleteUserOutput, loading: deleteUserLoading },
+  ] = useMutation<deleteUser, deleteUserVariables>(DELETE_USER, {
+    onCompleted,
+  });
 
   return (
     <React.Fragment>
@@ -84,19 +130,34 @@ export const DeleteAccount = () => {
                 label="Password"
                 type="password"
                 id="password"
-                inputRef={register()}
+                inputRef={register({ minLength: 8 })}
               />
+              {errors.password?.type === "minLength" && (
+                <div>
+                  <FormError
+                    errorMessage={"Password must be at least 8 chars"}
+                  />
+                </div>
+              )}
               <Button
-                type="button"
+                type="submit"
                 fullWidth
                 variant="contained"
                 className={classes.deleteButton}
-                onClick={() => {
-                  // TODO
-                }}
+                disabled={!formState.isValid}
+                onClick={onSubmit}
               >
-                Delete account
+                {deleteUserLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  "Delete account"
+                )}
               </Button>
+              {deleteUserOutput?.deleteUser.error && (
+                <div>
+                  <FormError errorMessage={deleteUserOutput.deleteUser.error} />
+                </div>
+              )}
             </form>
           </div>
         </Container>
