@@ -10,10 +10,17 @@ import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router-dom";
 import { Header } from "../components/header";
 import { userDetail, userDetailVariables } from "../__generated__/userDetail";
+import Countdown from "react-countdown";
 
 type IParams = {
   id: string;
 };
+
+interface IRenderer {
+  minutes: number;
+  seconds: number;
+  completed: boolean;
+}
 
 const USER_DETAIL = gql`
   query userDetail($input: UserDetailDto!) {
@@ -62,13 +69,10 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: theme.spacing(2),
   },
   productList: {
-    // Deleted
-    // backgroundColor: "red",
     padding: 0,
     minHeight: theme.spacing(20),
   },
   productItems: {
-    // backgroundColor: "blue",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -77,6 +81,32 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(1),
+  },
+  waitingItems: {
+    display: "flex",
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    padding: 0,
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+  },
+  inProgressItems: {
+    display: "flex",
+    padding: 0,
+  },
+  productTitle: {
+    marginRight: "4px",
+    textDecoration: "none",
+    cursor: "pointer",
+    "&:hover": {
+      textDecoration: "underline",
+    },
+  },
+  countdown: {
+    minWidth: theme.spacing(8),
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
   noProduct: {
     display: "flex",
@@ -110,6 +140,23 @@ export const UserDetail = () => {
     userDetailQuery();
   }, [userDetailQuery, history, id]);
 
+  const renderer = ({ minutes, seconds, completed }: IRenderer) => {
+    if (completed) {
+      // Render a completed state
+      return (
+        <span style={{ color: "#f44336", fontSize: "14px" }}>Finished!</span>
+      );
+    } else {
+      // Render a countdown
+      return (
+        <span style={{ color: "#ff7961", fontSize: "14px" }}>
+          {minutes < 10 ? `0${minutes}m` : `${minutes}m`}{" "}
+          {seconds < 10 ? `0${seconds}s` : `${seconds}s`}
+        </span>
+      );
+    }
+  };
+
   return (
     <React.Fragment>
       <Helmet>
@@ -142,16 +189,29 @@ export const UserDetail = () => {
                   ) : (
                     data.userDetail.inProgress.map((product) => (
                       <Container className={classes.productItems}>
+                        <Container className={classes.inProgressItems}>
+                          <Typography
+                            variant="subtitle1"
+                            onClick={() => {
+                              history.push(`/product/${product.id}`);
+                            }}
+                            className={classes.productTitle}
+                          >
+                            {product.productName}
+                          </Typography>
+                          <Typography variant="subtitle1">
+                            ∙ {product.bidPrice}₩
+                          </Typography>
+                        </Container>
                         <Typography
                           variant="subtitle1"
-                          onClick={() => {
-                            history.push(`/product/${product.id}`);
-                          }}
+                          className={classes.countdown}
                         >
-                          {product.productName} ∙ {product.bidPrice}₩
+                          <Countdown
+                            date={product.remainingTime}
+                            renderer={renderer}
+                          />
                         </Typography>
-                        {/* TODO */}
-                        <Typography variant="subtitle1">03m 32s</Typography>
                       </Container>
                     ))
                   )
@@ -177,14 +237,18 @@ export const UserDetail = () => {
                     </Container>
                   ) : (
                     data.userDetail.waiting.map((product) => (
-                      <Container className={classes.productItems}>
+                      <Container className={classes.waitingItems}>
                         <Typography
                           variant="subtitle1"
                           onClick={() => {
                             history.push(`/product/${product.id}`);
                           }}
+                          className={classes.productTitle}
                         >
-                          {product.productName} ∙ {product.startPrice}₩
+                          {product.productName}
+                        </Typography>
+                        <Typography variant="subtitle1">
+                          ∙ {product.startPrice}₩
                         </Typography>
                       </Container>
                     ))
