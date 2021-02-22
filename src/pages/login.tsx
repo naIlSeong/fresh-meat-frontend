@@ -26,7 +26,6 @@ const LOGIN = gql`
     login(input: $input) {
       ok
       error
-      sessionId
     }
   }
 `;
