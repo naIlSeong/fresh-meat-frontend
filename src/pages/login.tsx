@@ -89,13 +89,11 @@ export const Login = () => {
 
   const onCompleted = (data: login) => {
     const {
-      login: { ok, sessionId },
+      login: { ok },
     } = data;
     if (ok) {
-      if (sessionId) {
-        isLoggedInVar(true);
-        history.push("/");
-      }
+      isLoggedInVar(true);
+      history.push("/");
     }
   };
 
