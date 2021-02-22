@@ -509,7 +509,7 @@ export const Home = () => {
                   <Container className={classes.noContent}>
                     <Typography variant="h3">Oops!</Typography>
                     <Typography variant="subtitle1">
-                      There are no products waiting for auction 🦴
+                      There are no product waiting for auction 🦴
                     </Typography>
                   </Container>
                 ) : (

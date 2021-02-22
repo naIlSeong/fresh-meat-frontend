@@ -6,6 +6,7 @@ import { NotFound } from "../components/not-found";
 import { EditAccount } from "../pages/edit-account";
 import { Home } from "../pages/home";
 import { DeleteAccount } from "../pages/delete-account";
+import { UserDetail } from "../pages/user-detail";
 
 export const LoggedInRouter = () => {
   return (
@@ -18,6 +19,9 @@ export const LoggedInRouter = () => {
         <Route path="/delete-account" exact>
           <Header title="Delete Account" />
           <DeleteAccount />
+        </Route>
+        <Route path="/user/:username" exact>
+          <UserDetail />
         </Route>
         <Route path="/" exact>
           <Header title="Fresh Meat" />
