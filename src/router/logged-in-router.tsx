@@ -20,7 +20,7 @@ export const LoggedInRouter = () => {
           <Header title="Delete Account" />
           <DeleteAccount />
         </Route>
-        <Route path="/user/:username" exact>
+        <Route path="/user/:id" exact>
           <UserDetail />
         </Route>
         <Route path="/" exact>

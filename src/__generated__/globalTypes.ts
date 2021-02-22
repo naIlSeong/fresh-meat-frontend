@@ -42,6 +42,10 @@ export interface UpdateUserDto {
   password?: string | null;
 }
 
+export interface UserDetailDto {
+  userId: number;
+}
+
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

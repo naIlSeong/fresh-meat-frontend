@@ -1,17 +1,43 @@
+import { gql, useLazyQuery } from "@apollo/client";
 import {
   CircularProgress,
   Container,
   makeStyles,
   Typography,
 } from "@material-ui/core";
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Header } from "../components/header";
+import { userDetail, userDetailVariables } from "../__generated__/userDetail";
 
 type IParams = {
-  username: string;
+  id: string;
 };
+
+const USER_DETAIL = gql`
+  query userDetail($input: UserDetailDto!) {
+    userDetail(input: $input) {
+      ok
+      error
+      user {
+        id
+        username
+      }
+      inProgress {
+        id
+        productName
+        bidPrice
+        remainingTime
+      }
+      waiting {
+        id
+        productName
+        startPrice
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   loading: {
@@ -19,6 +45,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     padding: theme.spacing(24),
+  },
+  productLoading: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: theme.spacing(20),
   },
   mainContent: {
     display: "flex",
@@ -56,45 +88,76 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const UserDetail = () => {
-  const { username } = useParams<IParams>();
+  const { id } = useParams<IParams>();
   const classes = useStyles();
+  const history = useHistory();
 
-  // TODO : Delete
-  const loading = false;
-  const empty = false;
+  const [userDetailQuery, { data, loading }] = useLazyQuery<
+    userDetail,
+    userDetailVariables
+  >(USER_DETAIL, {
+    variables: {
+      input: {
+        userId: +id,
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (!id) {
+      history.push("/");
+    }
+    userDetailQuery();
+  }, [userDetailQuery, history, id]);
 
   return (
     <React.Fragment>
       <Helmet>
-        <title>{`Fresh Meat - ${username}`}</title>
+        <title>{`Fresh Meat - ${data?.userDetail.user?.username}`}</title>
       </Helmet>
       <Header title="Profile" />
       <main>
         <Container maxWidth="md">
-          {loading ? (
+          {loading && !data ? (
             <Container className={classes.loading}>
               <CircularProgress size={24} color="secondary" />
             </Container>
           ) : (
             <Container maxWidth="xs" className={classes.mainContent}>
-              <Typography variant="h4">{`${username}'s products`}</Typography>
+              <Typography variant="h4">{`${data?.userDetail.user?.username}'s products`}</Typography>
 
               {/* In Progress */}
               <Typography variant="h5" className={classes.subtitle}>
                 In progress
               </Typography>
               <Container className={classes.productList}>
-                {empty ? (
-                  <Container className={classes.noProduct}>
-                    <Typography variant="h3">Oops!</Typography>
-                    <Typography variant="subtitle1">
-                      There is no product in progress 🦴
-                    </Typography>
-                  </Container>
+                {!loading && data?.userDetail.inProgress ? (
+                  data.userDetail.inProgress.length === 0 ? (
+                    <Container className={classes.noProduct}>
+                      <Typography variant="h3">Oops!</Typography>
+                      <Typography variant="subtitle1">
+                        There is no product in progress 🦴
+                      </Typography>
+                    </Container>
+                  ) : (
+                    data.userDetail.inProgress.map((product) => (
+                      <Container className={classes.productItems}>
+                        <Typography
+                          variant="subtitle1"
+                          onClick={() => {
+                            history.push(`/product/${product.id}`);
+                          }}
+                        >
+                          {product.productName} ∙ {product.bidPrice}₩
+                        </Typography>
+                        {/* TODO */}
+                        <Typography variant="subtitle1">03m 32s</Typography>
+                      </Container>
+                    ))
+                  )
                 ) : (
-                  <Container className={classes.productItems}>
-                    <Typography variant="subtitle1">Air Pods</Typography>
-                    <Typography variant="subtitle1">03m 32s</Typography>
+                  <Container className={classes.productLoading}>
+                    <CircularProgress size={24} color="secondary" />
                   </Container>
                 )}
               </Container>
@@ -104,17 +167,31 @@ export const UserDetail = () => {
                 Waiting for auction
               </Typography>
               <Container className={classes.productList}>
-                {empty ? (
-                  <Container className={classes.noProduct}>
-                    <Typography variant="h3">Oops!</Typography>
-                    <Typography variant="subtitle1">
-                      There is no product waiting for auction 🦴
-                    </Typography>
-                  </Container>
+                {!loading && data?.userDetail.waiting ? (
+                  data.userDetail.waiting.length === 0 ? (
+                    <Container className={classes.noProduct}>
+                      <Typography variant="h3">Oops!</Typography>
+                      <Typography variant="subtitle1">
+                        There is no product waiting for auction 🦴
+                      </Typography>
+                    </Container>
+                  ) : (
+                    data.userDetail.waiting.map((product) => (
+                      <Container className={classes.productItems}>
+                        <Typography
+                          variant="subtitle1"
+                          onClick={() => {
+                            history.push(`/product/${product.id}`);
+                          }}
+                        >
+                          {product.productName} ∙ {product.startPrice}₩
+                        </Typography>
+                      </Container>
+                    ))
+                  )
                 ) : (
-                  <Container className={classes.productItems}>
-                    <Typography variant="subtitle1">Air Pods</Typography>
-                    <Typography variant="subtitle1">03m 32s</Typography>
+                  <Container className={classes.productLoading}>
+                    <CircularProgress size={24} color="secondary" />
                   </Container>
                 )}
               </Container>

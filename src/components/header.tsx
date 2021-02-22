@@ -89,7 +89,7 @@ export const Header = ({ title }: IProps) => {
                 handleClose();
               }
               if (!loading && data) {
-                history.push(`/user/${data.me.username}`);
+                history.push(`/user/${data.me.id}`);
                 handleClose();
               }
             }}
