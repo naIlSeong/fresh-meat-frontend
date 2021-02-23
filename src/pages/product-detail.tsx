@@ -31,6 +31,10 @@ import {
   editProgressVariables,
 } from "../__generated__/editProgress";
 import { FormError } from "../components/form-error";
+import {
+  deleteProduct,
+  deleteProductVariables,
+} from "../__generated__/deleteProduct";
 
 type IParams = {
   id: string;
@@ -63,6 +67,15 @@ const PRODUCT_DETAIL = gql`
 const EDIT_PROGRESS = gql`
   mutation editProgress($input: EditProgressDto!) {
     editProgress(input: $input) {
+      ok
+      error
+    }
+  }
+`;
+
+const DELETE_PRODUCT = gql`
+  mutation deleteProduct($input: DeleteProductDto!) {
+    deleteProduct(input: $input) {
       ok
       error
     }
@@ -133,6 +146,15 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#650000",
     },
   },
+  editButton: {
+    marginRight: theme.spacing(2),
+    backgroundColor: theme.palette.secondary.main,
+    color: "white",
+    minWidth: "180px",
+    "&.MuiButton-root:hover": {
+      backgroundColor: theme.palette.secondary.dark,
+    },
+  },
 }));
 
 export const ProductDetail = () => {
@@ -158,6 +180,19 @@ export const ProductDetail = () => {
       editProgress: { ok },
     } = data;
     if (ok) {
+      handleClose();
+      window.location.reload();
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const onDeleteCompleted = (data: deleteProduct) => {
+    const {
+      deleteProduct: { ok },
+    } = data;
+    if (ok) {
+      handleClose();
+      history.push("/");
       window.location.reload();
       window.scrollTo(0, 0);
     }
@@ -168,6 +203,13 @@ export const ProductDetail = () => {
     { data: editProgressOutput, loading: editProgressLoading },
   ] = useMutation<editProgress, editProgressVariables>(EDIT_PROGRESS, {
     onCompleted,
+  });
+
+  const [
+    deleteProductMutation,
+    { data: deleteProductOutput, loading: deleteProductLoading },
+  ] = useMutation<deleteProduct, deleteProductVariables>(DELETE_PRODUCT, {
+    onCompleted: onDeleteCompleted,
   });
 
   const handleClickOpen = () => {
@@ -401,7 +443,6 @@ export const ProductDetail = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              handleClose();
                               if (productDetailOutput.productDetail.product) {
                                 editProgressMutation({
                                   variables: {
@@ -470,7 +511,6 @@ export const ProductDetail = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              handleClose();
                               if (productDetailOutput.productDetail.product) {
                                 editProgressMutation({
                                   variables: {
@@ -495,6 +535,24 @@ export const ProductDetail = () => {
                         </DialogActions>
                       </Dialog>
                     </>
+                  )}
+
+                {/* Edit Button */}
+                {meOutput?.me.id ===
+                  productDetailOutput?.productDetail.product?.seller.id &&
+                  productDetailOutput?.productDetail.product?.progress ===
+                    Progress.Waiting && (
+                    <Button
+                      className={classes.editButton}
+                      onClick={() => {
+                        history.push(
+                          `/edit-product/${productDetailOutput.productDetail.product?.id}`
+                        );
+                        window.scrollTo(0, 0);
+                      }}
+                    >
+                      Edit product
+                    </Button>
                   )}
 
                 {/* Delete Button */}
@@ -526,6 +584,13 @@ export const ProductDetail = () => {
                           <DialogContentText id="alert-dialog-description">
                             Are you sure you want to delete the product?
                           </DialogContentText>
+                          {deleteProductOutput?.deleteProduct.error && (
+                            <FormError
+                              errorMessage={
+                                deleteProductOutput.deleteProduct.error
+                              }
+                            />
+                          )}
                         </DialogContent>
                         <DialogActions>
                           <Button onClick={handleClose} color="primary">
@@ -533,13 +598,27 @@ export const ProductDetail = () => {
                           </Button>
                           <Button
                             onClick={() => {
-                              handleClose();
                               // TODO : Delete Product
+                              if (productDetailOutput.productDetail.product) {
+                                deleteProductMutation({
+                                  variables: {
+                                    input: {
+                                      productId:
+                                        productDetailOutput.productDetail
+                                          .product.id,
+                                    },
+                                  },
+                                });
+                              }
                             }}
                             color="primary"
                             autoFocus
                           >
-                            Yes
+                            {deleteProductLoading ? (
+                              <CircularProgress size={14} />
+                            ) : (
+                              "Yes"
+                            )}
                           </Button>
                         </DialogActions>
                       </Dialog>

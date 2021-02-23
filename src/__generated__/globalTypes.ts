@@ -26,6 +26,10 @@ export interface CreateUserDto {
   password: string;
 }
 
+export interface DeleteProductDto {
+  productId: number;
+}
+
 export interface DeleteUserDto {
   password: string;
 }
