@@ -39,6 +39,10 @@ export interface LoginDto {
   password: string;
 }
 
+export interface ProductDetailDto {
+  productId: number;
+}
+
 export interface UpdateBiddingDto {
   productId: number;
   bidPrice: number;

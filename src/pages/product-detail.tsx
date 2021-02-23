@@ -18,13 +18,42 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Helmet } from "react-helmet-async";
-import { Link, useParams } from "react-router-dom";
-import { Header } from "../components/header";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Progress } from "../__generated__/globalTypes";
+import { gql, useLazyQuery } from "@apollo/client";
+import { useMe } from "../hooks/use-me";
+import {
+  productDetail,
+  productDetailVariables,
+} from "../__generated__/productDetail";
 
 type IParams = {
   id: string;
 };
+
+const PRODUCT_DETAIL = gql`
+  query productDetail($input: ProductDetailDto!) {
+    productDetail(input: $input) {
+      ok
+      error
+      product {
+        id
+        productName
+        startPrice
+        bidPrice
+        seller {
+          id
+          username
+        }
+        bidder {
+          id
+          username
+        }
+        progress
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   loading: {
@@ -95,8 +124,20 @@ const useStyles = makeStyles((theme) => ({
 export const ProductDetail = () => {
   const { id } = useParams<IParams>();
   const classes = useStyles();
+  const history = useHistory();
   const [activeStep, setActiveStep] = React.useState(0);
   const [open, setOpen] = React.useState(false);
+  const { data: meOutput } = useMe();
+  const [
+    productDetailQuery,
+    { data: productDetailOutput, loading: productDetailLoading },
+  ] = useLazyQuery<productDetail, productDetailVariables>(PRODUCT_DETAIL, {
+    variables: {
+      input: {
+        productId: +id,
+      },
+    },
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -106,58 +147,85 @@ export const ProductDetail = () => {
     setOpen(false);
   };
 
-  // Delete
-  const loading = false;
   const steps = ["Waiting", "In progress", "Closed", "Paid", "Completed"];
-  const product = {
-    id: 1,
-    productName: "MacBook Pro",
-    startPrice: "5000",
-    bidPrice: "14000",
-    // progress: "Waiting",
-    // progress: "InProgress",
-    // progress: "Closed",
-    // progress: "Paid",
-    progress: "Completed",
-    seller: { id: 4444, username: "Anonymous" },
-    bidder: { id: 6666, username: "nailseong" },
-  };
-  const me = { id: 4444 };
-  //   const me = { id: 6666 };
-  // Delete
+  //   const product = {
+  //     id: 1,
+  //     productName: "MacBook Pro",
+  //     startPrice: "5000",
+  //     bidPrice: "14000",
+  //     // progress: "Waiting",
+  //     // progress: "InProgress",
+  //     // progress: "Closed",
+  //     // progress: "Paid",
+  //     progress: "Completed",
+  //     seller: { id: 4444, username: "Anonymous" },
+  //     bidder: { id: 6666, username: "nailseong" },
+  //   };
 
   useEffect(() => {
-    if (product.progress === Progress.Waiting) {
+    if (!id || !meOutput) {
+      history.push("/");
+    }
+    if (id) {
+      productDetailQuery({
+        variables: {
+          input: {
+            productId: +id,
+          },
+        },
+      });
+    }
+
+    if (
+      productDetailOutput?.productDetail.product?.progress === Progress.Waiting
+    ) {
       setActiveStep(0);
     }
-    if (product.progress === Progress.InProgress) {
+    if (
+      productDetailOutput?.productDetail.product?.progress ===
+      Progress.InProgress
+    ) {
       setActiveStep(1);
     }
-    if (product.progress === Progress.Closed) {
+    if (
+      productDetailOutput?.productDetail.product?.progress === Progress.Closed
+    ) {
       setActiveStep(2);
     }
-    if (product.progress === Progress.Paid) {
+    if (
+      productDetailOutput?.productDetail.product?.progress === Progress.Paid
+    ) {
       setActiveStep(3);
     }
-    if (product.progress === Progress.Completed) {
+    if (
+      productDetailOutput?.productDetail.product?.progress ===
+      Progress.Completed
+    ) {
       setActiveStep(4);
     }
-  }, []);
+  }, [
+    history,
+    id,
+    meOutput,
+    productDetailOutput?.productDetail.product?.progress,
+    productDetailQuery,
+  ]);
 
   return (
     <React.Fragment>
       <Helmet>
-        <title>{`Fresh Meat - productname`}</title>
+        <title>{`Fresh Meat - ${productDetailOutput?.productDetail.product?.productName}`}</title>
       </Helmet>
-      <Header title={product.productName} />
       <main className={classes.layout}>
         <Container maxWidth="md">
-          {loading ? (
+          {productDetailLoading &&
+          productDetailOutput?.productDetail.product ? (
             <Container className={classes.loading}>
               <CircularProgress size={24} color="secondary" />
             </Container>
           ) : (
             <div>
+              {/* Stepper */}
               <Typography variant="h5">Progress status</Typography>
               <Stepper
                 activeStep={activeStep}
@@ -172,73 +240,112 @@ export const ProductDetail = () => {
                   </Step>
                 ))}
               </Stepper>
+
+              {/* Detail */}
               <Typography variant="h5" gutterBottom>
                 Product detail
               </Typography>
+
+              {/* Product name */}
               <List disablePadding>
                 <ListItem
                   className={classes.listItem}
-                  key={product.productName}
+                  key={productDetailOutput?.productDetail.product?.productName}
                 >
                   <ListItemText
                     primary="Product name"
-                    secondary={product.productName}
+                    secondary={
+                      productDetailOutput?.productDetail.product?.productName
+                    }
                   />
                 </ListItem>
-                <ListItem className={classes.listItem} key={product.startPrice}>
-                  <ListItemText
-                    primary="Starting price"
-                    secondary={`${product.startPrice}₩`}
-                  />
-                </ListItem>
-                <ListItem className={classes.listItem} key={product.bidPrice}>
-                  <ListItemText
-                    primary="Final price"
-                    secondary={`${product.bidPrice}₩`}
-                  />
-                </ListItem>
+
+                {/* Starting price */}
                 <ListItem
                   className={classes.listItem}
-                  key={product.seller.username}
+                  key={productDetailOutput?.productDetail.product?.startPrice}
+                >
+                  <ListItemText
+                    primary="Starting price"
+                    secondary={`${productDetailOutput?.productDetail.product?.startPrice}₩`}
+                  />
+                </ListItem>
+
+                {/* Current Price */}
+                {productDetailOutput?.productDetail.product?.bidder && (
+                  <ListItem
+                    className={classes.listItem}
+                    key={productDetailOutput?.productDetail.product?.bidPrice}
+                  >
+                    <ListItemText
+                      primary="Current price"
+                      secondary={`${productDetailOutput?.productDetail.product?.bidPrice}₩`}
+                    />
+                  </ListItem>
+                )}
+
+                {/* Seller */}
+                <ListItem
+                  className={classes.listItem}
+                  key={
+                    productDetailOutput?.productDetail.product?.seller.username
+                  }
                 >
                   <ListItemText
                     primary="Seller"
                     secondary={
                       <Typography variant="body2">
                         <Link
-                          to={`/user/${product.seller.id}`}
+                          to={`/user/${productDetailOutput?.productDetail.product?.seller.id}`}
                           className={classes.textLink}
                         >
-                          {product.seller.username}
+                          {
+                            productDetailOutput?.productDetail.product?.seller
+                              .username
+                          }
                         </Link>
                       </Typography>
                     }
                   />
                 </ListItem>
-                <ListItem
-                  className={classes.listItem}
-                  key={product.bidder.username}
-                >
-                  <ListItemText
-                    primary="Buyer"
-                    secondary={
-                      <Typography variant="body2">
-                        <Link
-                          to={`/user/${product.bidder.id}`}
-                          className={classes.textLink}
-                        >
-                          {product.bidder.username}
-                        </Link>
-                      </Typography>
+
+                {/* Buyer */}
+                {productDetailOutput?.productDetail.product?.bidder && (
+                  <ListItem
+                    className={classes.listItem}
+                    key={
+                      productDetailOutput?.productDetail.product?.bidder
+                        .username
                     }
-                  />
-                </ListItem>
+                  >
+                    <ListItemText
+                      primary="Buyer"
+                      secondary={
+                        <Typography variant="body2">
+                          <Link
+                            to={`/user/${productDetailOutput.productDetail.product.bidder.id}`}
+                            className={classes.textLink}
+                          >
+                            {
+                              productDetailOutput.productDetail.product.bidder
+                                .username
+                            }
+                          </Link>
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                )}
               </List>
 
+              {/* Button */}
               <Container className={classes.buttonContainer}>
                 {/* closed -> paid */}
-                {me.id === product.bidder.id &&
-                  product.progress === Progress.Closed && (
+                {productDetailOutput?.productDetail.product?.bidder &&
+                  meOutput?.me.id ===
+                    productDetailOutput.productDetail.product.bidder.id &&
+                  productDetailOutput.productDetail.product.progress ===
+                    Progress.Closed && (
                     <>
                       <Button
                         className={classes.button}
@@ -283,8 +390,10 @@ export const ProductDetail = () => {
                   )}
 
                 {/* paid -> completed */}
-                {me.id === product.seller.id &&
-                  product.progress === Progress.Paid && (
+                {meOutput?.me.id ===
+                  productDetailOutput?.productDetail.product?.seller.id &&
+                  productDetailOutput?.productDetail.product?.progress ===
+                    Progress.Paid && (
                     <>
                       <Button
                         className={classes.button}
@@ -329,9 +438,12 @@ export const ProductDetail = () => {
                   )}
 
                 {/* Delete Button */}
-                {me.id === product.seller.id &&
-                  (product.progress === Progress.Waiting ||
-                    product.progress === Progress.Completed) && (
+                {meOutput?.me.id ===
+                  productDetailOutput?.productDetail.product?.seller.id &&
+                  (productDetailOutput?.productDetail.product?.progress ===
+                    Progress.Waiting ||
+                    productDetailOutput?.productDetail.product?.progress ===
+                      Progress.Completed) && (
                     <>
                       <Button
                         className={classes.deleteButton}

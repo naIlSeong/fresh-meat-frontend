@@ -8,7 +8,6 @@ import {
 import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router-dom";
-import { Header } from "../components/header";
 import { userDetail, userDetailVariables } from "../__generated__/userDetail";
 import Countdown from "react-countdown";
 
@@ -162,7 +161,6 @@ export const UserDetail = () => {
       <Helmet>
         <title>{`Fresh Meat - ${data?.userDetail.user?.username}`}</title>
       </Helmet>
-      <Header title="Profile" />
       <main>
         <Container maxWidth="md">
           {loading && !data ? (

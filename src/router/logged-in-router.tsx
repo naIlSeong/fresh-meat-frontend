@@ -23,12 +23,15 @@ export const LoggedInRouter = () => {
           <DeleteAccount />
         </Route>
         <Route path="/my-profile" exact>
+          <Header title="My Profile" />
           <MyProfile />
         </Route>
         <Route path="/user/:id" exact>
+          <Header title="Profile" />
           <UserDetail />
         </Route>
         <Route path="/product/:id" exact>
+          <Header title="Product Detail" />
           <ProductDetail />
         </Route>
         <Route path="/" exact>
