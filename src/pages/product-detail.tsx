@@ -20,12 +20,16 @@ import {
 import { Helmet } from "react-helmet-async";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Progress } from "../__generated__/globalTypes";
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import { useMe } from "../hooks/use-me";
 import {
   productDetail,
   productDetailVariables,
 } from "../__generated__/productDetail";
+import {
+  editProgress,
+  editProgressVariables,
+} from "../__generated__/editProgress";
 
 type IParams = {
   id: string;
@@ -51,6 +55,15 @@ const PRODUCT_DETAIL = gql`
         }
         progress
       }
+    }
+  }
+`;
+
+const EDIT_PROGRESS = gql`
+  mutation editProgress($input: EditProgressDto!) {
+    editProgress(input: $input) {
+      ok
+      error
     }
   }
 `;
@@ -139,6 +152,23 @@ export const ProductDetail = () => {
     },
   });
 
+  const onCompleted = (data: editProgress) => {
+    const {
+      editProgress: { ok },
+    } = data;
+    if (ok) {
+      window.location.reload();
+      window.scrollTo(0, 0);
+    }
+  };
+
+  const [
+    editProgressMutation,
+    { data: editProgressOutput, loading: editProgressLoading },
+  ] = useMutation<editProgress, editProgressVariables>(EDIT_PROGRESS, {
+    onCompleted,
+  });
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -148,22 +178,9 @@ export const ProductDetail = () => {
   };
 
   const steps = ["Waiting", "In progress", "Closed", "Paid", "Completed"];
-  //   const product = {
-  //     id: 1,
-  //     productName: "MacBook Pro",
-  //     startPrice: "5000",
-  //     bidPrice: "14000",
-  //     // progress: "Waiting",
-  //     // progress: "InProgress",
-  //     // progress: "Closed",
-  //     // progress: "Paid",
-  //     progress: "Completed",
-  //     seller: { id: 4444, username: "Anonymous" },
-  //     bidder: { id: 6666, username: "nailseong" },
-  //   };
 
   useEffect(() => {
-    if (!id || !meOutput) {
+    if (!id) {
       history.push("/");
     }
     if (id) {
@@ -377,12 +394,26 @@ export const ProductDetail = () => {
                           <Button
                             onClick={() => {
                               handleClose();
-                              // TODO : Closed -> Paid
+                              if (productDetailOutput.productDetail.product) {
+                                editProgressMutation({
+                                  variables: {
+                                    input: {
+                                      productId:
+                                        productDetailOutput.productDetail
+                                          .product.id,
+                                    },
+                                  },
+                                });
+                              }
                             }}
                             color="primary"
                             autoFocus
                           >
-                            Yes
+                            {editProgressLoading ? (
+                              <CircularProgress size={14} />
+                            ) : (
+                              "Yes"
+                            )}
                           </Button>
                         </DialogActions>
                       </Dialog>
@@ -425,12 +456,26 @@ export const ProductDetail = () => {
                           <Button
                             onClick={() => {
                               handleClose();
-                              // TODO : Paid -> Completed
+                              if (productDetailOutput.productDetail.product) {
+                                editProgressMutation({
+                                  variables: {
+                                    input: {
+                                      productId:
+                                        productDetailOutput.productDetail
+                                          .product.id,
+                                    },
+                                  },
+                                });
+                              }
                             }}
                             color="primary"
                             autoFocus
                           >
-                            Yes
+                            {editProgressLoading ? (
+                              <CircularProgress size={14} />
+                            ) : (
+                              "Yes"
+                            )}
                           </Button>
                         </DialogActions>
                       </Dialog>

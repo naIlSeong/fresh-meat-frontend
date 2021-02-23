@@ -28,7 +28,7 @@ export interface productDetail_productDetail_product {
   startPrice: number;
   bidPrice: number | null;
   seller: productDetail_productDetail_product_seller;
-  bidder: productDetail_productDetail_product_bidder;
+  bidder: productDetail_productDetail_product_bidder | null;
   progress: Progress;
 }
 

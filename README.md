@@ -41,11 +41,10 @@
 
   - [ ] Upload Product **(/product/new)**
   - [ ] Upload Image
-  - [ ] Product Detail **(/product/:id)**
+  - [x] Product Detail **(/product/:id)**
+  - [x] Edit Progress
   - [ ] Delete Product **(/product/:id/delete)**
   - [ ] Edit Product **(/product/:id/update)**
-
-  - [ ] Edit Progress?
 
 ---
 

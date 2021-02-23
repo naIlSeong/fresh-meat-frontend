@@ -30,6 +30,10 @@ export interface DeleteUserDto {
   password: string;
 }
 
+export interface EditProgressDto {
+  productId: number;
+}
+
 export interface GetAllProductsDto {
   page?: number | null;
 }
