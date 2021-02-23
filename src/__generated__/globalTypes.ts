@@ -7,6 +7,14 @@
 // START Enums and Input Objects
 //==============================================================
 
+export enum Progress {
+  Closed = "Closed",
+  Completed = "Completed",
+  InProgress = "InProgress",
+  Paid = "Paid",
+  Waiting = "Waiting",
+}
+
 export interface CreateBiddingDto {
   productId: number;
   startPrice: number;

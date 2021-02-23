@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Header } from "../components/header";
 import Container from "@material-ui/core/Container";
@@ -8,6 +8,54 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
+import { gql, useLazyQuery } from "@apollo/client";
+import { userDetail, userDetailVariables } from "../__generated__/userDetail";
+import { USER_DETAIL } from "./user-detail";
+import { useMe } from "../hooks/use-me";
+import Countdown from "react-countdown";
+import { myProfile } from "../__generated__/myProfile";
+
+interface IRenderer {
+  minutes: number;
+  seconds: number;
+  completed: boolean;
+}
+
+const MY_PROFILE = gql`
+  query myProfile {
+    myProfile {
+      ok
+      error
+      uploadedProduct {
+        id
+        productName
+        bidPrice
+        progress
+      }
+      inProgressProduct {
+        id
+        productName
+        bidPrice
+        remainingTime
+      }
+      closedProduct {
+        id
+        productName
+        bidPrice
+      }
+      paidProduct {
+        id
+        productName
+        bidPrice
+      }
+      completedProduct {
+        id
+        productName
+        bidPrice
+      }
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   loading: {
@@ -43,19 +91,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    // marginTop: theme.spacing(1),
-    // marginBottom: theme.spacing(1),
     padding: 0,
-    // paddingTop: theme.spacing(1),
-    // paddingBottom: theme.spacing(1),
   },
   waitingItems: {
     display: "flex",
-    // marginTop: theme.spacing(1),
-    // marginBottom: theme.spacing(1),
     padding: 0,
-    // paddingTop: theme.spacing(1),
-    // paddingBottom: theme.spacing(1),
   },
   inProgressItems: {
     display: "flex",
@@ -84,29 +124,66 @@ export const MyProfile = () => {
   const classes = useStyles();
   const history = useHistory();
   const [tab, setTab] = useState(true);
+  const { data } = useMe();
 
-  // TODO : Delete
-  const loading = false;
-  const products = [
-    { id: 1, productName: "xxx", price: 1234, progress: "Closed" },
-    { id: 2, productName: "ooo", price: 4321, progress: "Paid" },
-  ];
+  const [
+    userDetailQuery,
+    { data: userDetailOutput, loading: userDetailLoading },
+  ] = useLazyQuery<userDetail, userDetailVariables>(USER_DETAIL);
+
+  const [
+    myProfileQuery,
+    { data: myProfileOutput, loading: myProfileLoading },
+  ] = useLazyQuery<myProfile>(MY_PROFILE);
+
+  useEffect(() => {
+    if (!data) {
+      history.push("/");
+    }
+    if (data) {
+      userDetailQuery({
+        variables: {
+          input: {
+            userId: data.me.id,
+          },
+        },
+      });
+      myProfileQuery();
+    }
+  }, [data, history, userDetailQuery, myProfileQuery]);
+
+  const renderer = ({ minutes, seconds, completed }: IRenderer) => {
+    if (completed) {
+      // Render a completed state
+      return (
+        <span style={{ color: "#f44336", fontSize: "14px" }}>Finished!</span>
+      );
+    } else {
+      // Render a countdown
+      return (
+        <span style={{ color: "#ff7961", fontSize: "14px" }}>
+          {minutes < 10 ? `0${minutes}m` : `${minutes}m`}{" "}
+          {seconds < 10 ? `0${seconds}s` : `${seconds}s`}
+        </span>
+      );
+    }
+  };
 
   return (
     <React.Fragment>
       <Helmet>
-        <title>Fresh Meat - username</title>
+        <title>{`Fresh Meat - ${data?.me.username}`}</title>
       </Helmet>
-      <Header title="User name" />
+      <Header title="My Profile" />
       <main>
         <Container maxWidth="md">
-          {loading ? (
+          {userDetailLoading || myProfileLoading ? (
             <Container className={classes.loading}>
               <CircularProgress size={24} color="secondary" />
             </Container>
           ) : (
             <Container maxWidth="xs" className={classes.mainContent}>
-              <Typography variant="h4">username's product</Typography>
+              <Typography variant="h4">{`${data?.me.username}'s products`}</Typography>
 
               {/* Tab */}
               <Grid
@@ -137,45 +214,48 @@ export const MyProfile = () => {
                 </Grid>
               </Grid>
 
-              {tab === true ? (
+              {tab === true &&
+              userDetailOutput?.userDetail.inProgress &&
+              userDetailOutput.userDetail.waiting &&
+              myProfileOutput?.myProfile.uploadedProduct ? (
                 <>
                   {/* In Progress */}
                   <Typography variant="h5" className={classes.subtitle}>
                     In progress
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {userDetailOutput.userDetail.inProgress.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product in progress 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
+                      userDetailOutput.userDetail.inProgress.map((product) => (
                         <Container className={classes.productItems}>
                           <Container className={classes.inProgressItems}>
                             <Typography
                               variant="subtitle1"
                               onClick={() => {
                                 history.push(`/product/${product.id}`);
+                                window.scrollTo(0, 0);
                               }}
                               className={classes.productTitle}
                             >
                               {product.productName}
                             </Typography>
                             <Typography variant="subtitle1">
-                              ∙ {product.price}₩
+                              ∙ {product.bidPrice}₩
                             </Typography>
                           </Container>
                           <Typography
                             variant="subtitle1"
                             className={classes.countdown}
                           >
-                            3333
-                            {/* <Countdown
+                            <Countdown
                               date={product.remainingTime}
                               renderer={renderer}
-                            /> */}
+                            />
                           </Typography>
                         </Container>
                       ))
@@ -187,26 +267,27 @@ export const MyProfile = () => {
                     Waiting for auction
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {userDetailOutput.userDetail.waiting.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product waiting for auction 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
+                      userDetailOutput.userDetail.waiting.map((product) => (
                         <Container className={classes.waitingItems}>
                           <Typography
                             variant="subtitle1"
                             onClick={() => {
                               history.push(`/product/${product.id}`);
+                              window.scrollTo(0, 0);
                             }}
                             className={classes.productTitle}
                           >
                             {product.productName}
                           </Typography>
                           <Typography variant="subtitle1">
-                            ∙ {product.price}₩
+                            ∙ {product.startPrice}₩
                           </Typography>
                         </Container>
                       ))
@@ -218,80 +299,94 @@ export const MyProfile = () => {
                     Finished
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {myProfileOutput.myProfile.uploadedProduct.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product finished 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
-                        <Container className={classes.waitingItems}>
-                          <Typography
-                            variant="subtitle1"
-                            onClick={() => {
-                              history.push(`/product/${product.id}`);
-                            }}
-                            className={classes.productTitle}
-                          >
-                            {product.productName}
-                          </Typography>
-                          <Typography variant="subtitle1">
-                            ∙ {product.price}₩
-                          </Typography>
-                          <Typography
-                            variant="subtitle1"
-                            className={classes.productProgress}
-                          >
-                            ∙ {product.progress}
-                          </Typography>
-                        </Container>
-                      ))
-                    )}
-                  </Container>
-                </>
-              ) : (
-                <>
-                  {/* InProgress */}
-                  <Typography variant="h5" className={classes.subtitle}>
-                    InProgress
-                  </Typography>
-                  <Container className={classes.productList}>
-                    {products.length === 0 ? (
-                      <Container className={classes.noProduct}>
-                        <Typography variant="overline">
-                          There is no product in progress 🦴
-                        </Typography>
-                      </Container>
-                    ) : (
-                      products.map((product) => (
-                        <Container className={classes.productItems}>
-                          <Container className={classes.inProgressItems}>
+                      myProfileOutput.myProfile.uploadedProduct.map(
+                        (product) => (
+                          <Container className={classes.waitingItems}>
                             <Typography
                               variant="subtitle1"
                               onClick={() => {
                                 history.push(`/product/${product.id}`);
+                                window.scrollTo(0, 0);
                               }}
                               className={classes.productTitle}
                             >
                               {product.productName}
                             </Typography>
                             <Typography variant="subtitle1">
-                              ∙ {product.price}₩
+                              ∙ {product.bidPrice}₩
+                            </Typography>
+                            <Typography
+                              variant="subtitle1"
+                              className={classes.productProgress}
+                            >
+                              ∙ {product.progress}
                             </Typography>
                           </Container>
-                          <Typography
-                            variant="subtitle1"
-                            className={classes.countdown}
-                          >
-                            3333
-                            {/* <Countdown
-                                  date={product.remainingTime}
-                                  renderer={renderer}
-                                /> */}
-                          </Typography>
-                        </Container>
-                      ))
+                        )
+                      )
+                    )}
+                  </Container>
+                </>
+              ) : (
+                <>{/* TODO */}</>
+              )}
+              {tab === false &&
+              myProfileOutput?.myProfile.inProgressProduct &&
+              myProfileOutput.myProfile.closedProduct &&
+              myProfileOutput.myProfile.paidProduct &&
+              myProfileOutput.myProfile.completedProduct ? (
+                <>
+                  {/* InProgress */}
+                  <Typography variant="h5" className={classes.subtitle}>
+                    InProgress
+                  </Typography>
+                  <Container className={classes.productList}>
+                    {myProfileOutput.myProfile.inProgressProduct.length ===
+                    0 ? (
+                      <Container className={classes.noProduct}>
+                        <Typography variant="overline">
+                          There is no product in progress 🦴
+                        </Typography>
+                      </Container>
+                    ) : (
+                      myProfileOutput.myProfile.inProgressProduct.map(
+                        (product) => (
+                          <Container className={classes.productItems}>
+                            <Container className={classes.inProgressItems}>
+                              <Typography
+                                variant="subtitle1"
+                                onClick={() => {
+                                  history.push(`/product/${product.id}`);
+                                  window.scrollTo(0, 0);
+                                }}
+                                className={classes.productTitle}
+                              >
+                                {product.productName}
+                              </Typography>
+                              <Typography variant="subtitle1">
+                                ∙ {product.bidPrice}₩
+                              </Typography>
+                            </Container>
+                            <Typography
+                              variant="subtitle1"
+                              className={classes.countdown}
+                            >
+                              3333
+                              {/* <Countdown
+                              date={product.remainingTime}
+                              renderer={renderer}
+                            /> */}
+                            </Typography>
+                          </Container>
+                        )
+                      )
                     )}
                   </Container>
 
@@ -300,26 +395,27 @@ export const MyProfile = () => {
                     Closed
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {myProfileOutput.myProfile.closedProduct.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product closed 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
+                      myProfileOutput.myProfile.closedProduct.map((product) => (
                         <Container className={classes.waitingItems}>
                           <Typography
                             variant="subtitle1"
                             onClick={() => {
                               history.push(`/product/${product.id}`);
+                              window.scrollTo(0, 0);
                             }}
                             className={classes.productTitle}
                           >
                             {product.productName}
                           </Typography>
                           <Typography variant="subtitle1">
-                            ∙ {product.price}₩
+                            ∙ {product.bidPrice}₩
                           </Typography>
                         </Container>
                       ))
@@ -331,26 +427,27 @@ export const MyProfile = () => {
                     Paid
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {myProfileOutput.myProfile.paidProduct.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product waiting for payment 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
+                      myProfileOutput.myProfile.paidProduct.map((product) => (
                         <Container className={classes.waitingItems}>
                           <Typography
                             variant="subtitle1"
                             onClick={() => {
                               history.push(`/product/${product.id}`);
+                              window.scrollTo(0, 0);
                             }}
                             className={classes.productTitle}
                           >
                             {product.productName}
                           </Typography>
                           <Typography variant="subtitle1">
-                            ∙ {product.price}₩
+                            ∙ {product.bidPrice}₩
                           </Typography>
                         </Container>
                       ))
@@ -362,32 +459,37 @@ export const MyProfile = () => {
                     Completed
                   </Typography>
                   <Container className={classes.productList}>
-                    {products.length === 0 ? (
+                    {myProfileOutput.myProfile.completedProduct.length === 0 ? (
                       <Container className={classes.noProduct}>
                         <Typography variant="overline">
                           There is no product completed 🦴
                         </Typography>
                       </Container>
                     ) : (
-                      products.map((product) => (
-                        <Container className={classes.waitingItems}>
-                          <Typography
-                            variant="subtitle1"
-                            onClick={() => {
-                              history.push(`/product/${product.id}`);
-                            }}
-                            className={classes.productTitle}
-                          >
-                            {product.productName}
-                          </Typography>
-                          <Typography variant="subtitle1">
-                            ∙ {product.price}₩
-                          </Typography>
-                        </Container>
-                      ))
+                      myProfileOutput.myProfile.completedProduct.map(
+                        (product) => (
+                          <Container className={classes.waitingItems}>
+                            <Typography
+                              variant="subtitle1"
+                              onClick={() => {
+                                history.push(`/product/${product.id}`);
+                                window.scrollTo(0, 0);
+                              }}
+                              className={classes.productTitle}
+                            >
+                              {product.productName}
+                            </Typography>
+                            <Typography variant="subtitle1">
+                              ∙ {product.bidPrice}₩
+                            </Typography>
+                          </Container>
+                        )
+                      )
                     )}
                   </Container>
                 </>
+              ) : (
+                <>{/* TODO */}</>
               )}
             </Container>
           )}

@@ -35,7 +35,7 @@
   - [x] Delete User **(/user/withdrawal)**
   - [x] Logout
   - [x] User Detail **(/user/:username)**
-  - [ ] My Profile **(/my-profile)**
+  - [x] My Profile **(/my-profile)**
 
 - **Product**
 

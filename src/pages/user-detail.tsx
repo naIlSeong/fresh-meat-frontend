@@ -22,7 +22,7 @@ interface IRenderer {
   completed: boolean;
 }
 
-const USER_DETAIL = gql`
+export const USER_DETAIL = gql`
   query userDetail($input: UserDetailDto!) {
     userDetail(input: $input) {
       ok
