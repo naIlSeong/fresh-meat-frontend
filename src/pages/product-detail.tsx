@@ -30,6 +30,7 @@ import {
   editProgress,
   editProgressVariables,
 } from "../__generated__/editProgress";
+import { FormError } from "../components/form-error";
 
 type IParams = {
   id: string;
@@ -386,6 +387,13 @@ export const ProductDetail = () => {
                             Have you paid and would you like to ask for
                             confirmation?
                           </DialogContentText>
+                          {editProgressOutput?.editProgress.error && (
+                            <FormError
+                              errorMessage={
+                                editProgressOutput.editProgress.error
+                              }
+                            />
+                          )}
                         </DialogContent>
                         <DialogActions>
                           <Button onClick={handleClose} color="primary">
@@ -448,6 +456,13 @@ export const ProductDetail = () => {
                             Have you received payment and want to complete the
                             transaction?
                           </DialogContentText>
+                          {editProgressOutput?.editProgress.error && (
+                            <FormError
+                              errorMessage={
+                                editProgressOutput.editProgress.error
+                              }
+                            />
+                          )}
                         </DialogContent>
                         <DialogActions>
                           <Button onClick={handleClose} color="primary">

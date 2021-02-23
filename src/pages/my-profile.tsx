@@ -333,8 +333,9 @@ export const MyProfile = () => {
                   </Container>
                 </>
               ) : (
-                <>{/* TODO */}</>
+                <>{/* TODO : Render Error page */}</>
               )}
+
               {tab === false &&
               myProfileOutput?.myProfile.inProgressProduct &&
               myProfileOutput.myProfile.closedProduct &&
@@ -376,11 +377,10 @@ export const MyProfile = () => {
                               variant="subtitle1"
                               className={classes.countdown}
                             >
-                              3333
-                              {/* <Countdown
-                              date={product.remainingTime}
-                              renderer={renderer}
-                            /> */}
+                              <Countdown
+                                date={product.remainingTime}
+                                renderer={renderer}
+                              />
                             </Typography>
                           </Container>
                         )
@@ -487,7 +487,7 @@ export const MyProfile = () => {
                   </Container>
                 </>
               ) : (
-                <>{/* TODO */}</>
+                <>{/* TODO : Render Error page */}</>
               )}
             </Container>
           )}
