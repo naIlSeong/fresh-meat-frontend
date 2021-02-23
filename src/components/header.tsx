@@ -8,7 +8,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useMe } from "../hooks/use-me";
 import { useLogout } from "../hooks/use-logout";
-import { client } from "../apollo";
 
 type IProps = {
   title: string;

@@ -17,6 +17,16 @@ export const theme = createMuiTheme({
     },
   },
   overrides: {
+    MuiStepIcon: {
+      root: {
+        "&$completed": {
+          color: "#1b5e20",
+        },
+        "&$active": {
+          color: "#1b5e20",
+        },
+      },
+    },
     MuiCssBaseline: {
       "@global": {
         body: {

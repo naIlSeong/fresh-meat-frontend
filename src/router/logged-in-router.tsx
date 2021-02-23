@@ -8,6 +8,7 @@ import { Home } from "../pages/home";
 import { DeleteAccount } from "../pages/delete-account";
 import { UserDetail } from "../pages/user-detail";
 import { MyProfile } from "../pages/my-profile";
+import { ProductDetail } from "../pages/product-detail";
 
 export const LoggedInRouter = () => {
   return (
@@ -26,6 +27,9 @@ export const LoggedInRouter = () => {
         </Route>
         <Route path="/user/:id" exact>
           <UserDetail />
+        </Route>
+        <Route path="/product/:id" exact>
+          <ProductDetail />
         </Route>
         <Route path="/" exact>
           <Header title="Fresh Meat" />
