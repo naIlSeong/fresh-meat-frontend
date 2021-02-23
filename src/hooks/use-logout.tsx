@@ -1,5 +1,5 @@
 import { gql, useMutation } from "@apollo/client";
-import { isLoggedInVar } from "../apollo";
+import { client, isLoggedInVar } from "../apollo";
 import { logout } from "../__generated__/logout";
 import Cookies from "js-cookie";
 import { useHistory } from "react-router-dom";
@@ -23,6 +23,7 @@ export const useLogout = () => {
       isLoggedInVar(false);
       history.push("/");
       Cookies.remove("connect.sid");
+      client.clearStore();
     }
   };
 

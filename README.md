@@ -123,3 +123,32 @@ Can not open object url loaded from AWS S3
     ]
 }
 ```
+
+---
+
+#### **Issue #4**
+
+Cache remains in Apollo Client after logout
+
+**Solution**
+
+1. Update logout logic in `use-logout.tsx` like:
+
+```
+...
+if (ok) {
+      isLoggedInVar(false);
+      history.push("/");
+      Cookies.remove("connect.sid");
+      client.clearStore();
+    }
+```
+
+2. `clearStore()` vs`resetStore()`
+
+`resetStore()`will remove all data from the store and then re-executing all of active queries.
+In my case, `resetStore()`will refetch `meQuery`. Since `meQuery` is not a public query, API Server returns `403 Forbidden` error.
+But `clearStore()`will not refetch any active queries after clearing out cache.
+
+Docs: https://www.apollographql.com/docs/react/api/core/ApolloClient/
+https://www.apollographql.com/docs/react/api/core/ApolloClient/#functions
