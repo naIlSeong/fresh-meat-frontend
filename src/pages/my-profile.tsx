@@ -7,12 +7,13 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useReactiveVar } from "@apollo/client";
 import { userDetail, userDetailVariables } from "../__generated__/userDetail";
 import { USER_DETAIL } from "./user-detail";
 import { useMe } from "../hooks/use-me";
 import Countdown from "react-countdown";
 import { myProfile } from "../__generated__/myProfile";
+import { isLoggedInVar } from "../apollo";
 
 interface IRenderer {
   minutes: number;
@@ -120,6 +121,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const MyProfile = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const classes = useStyles();
   const history = useHistory();
   const [tab, setTab] = useState(true);
@@ -136,6 +138,10 @@ export const MyProfile = () => {
   ] = useLazyQuery<myProfile>(MY_PROFILE);
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      history.push("/");
+    }
+
     if (!data) {
       history.push("/");
     }
@@ -149,7 +155,7 @@ export const MyProfile = () => {
       });
       myProfileQuery();
     }
-  }, [data, history, userDetailQuery, myProfileQuery]);
+  }, [data, history, userDetailQuery, myProfileQuery, isLoggedIn]);
 
   const renderer = ({ minutes, seconds, completed }: IRenderer) => {
     if (completed) {

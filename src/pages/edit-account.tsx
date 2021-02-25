@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMe } from "../hooks/use-me";
 import Container from "@material-ui/core/Container";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -11,11 +11,12 @@ import { SubmitButton } from "../components/button";
 import EditIcon from "@material-ui/icons/EditOutlined";
 import TextField from "@material-ui/core/TextField";
 import { useForm } from "react-hook-form";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useReactiveVar } from "@apollo/client";
 import { updateUser, updateUserVariables } from "../__generated__/updateUser";
 import { useLogout } from "../hooks/use-logout";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
+import { isLoggedInVar } from "../apollo";
 
 type IForm = {
   username?: string;
@@ -78,11 +79,18 @@ const CssTextField = withStyles({
 })(TextField);
 
 export const EditAccount = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const classes = useStyles();
   const { data, loading } = useMe();
   const history = useHistory();
   const [logoutMutation] = useLogout();
   const [samePassword, setSamePassword] = useState(false);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      history.push("/");
+    }
+  }, [history, isLoggedIn]);
 
   const {
     register,

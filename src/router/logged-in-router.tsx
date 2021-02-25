@@ -16,6 +16,7 @@ export const LoggedInRouter = () => {
   return (
     <Router>
       <Switch>
+        {/* Private */}
         <Route path="/edit-account" exact>
           <Header title="Edit Account" />
           <EditAccount />
@@ -28,6 +29,8 @@ export const LoggedInRouter = () => {
           <Header title="My Profile" />
           <MyProfile />
         </Route>
+
+        {/* Public */}
         <Route path="/login" exact>
           <Header title="Login" />
           <Login />

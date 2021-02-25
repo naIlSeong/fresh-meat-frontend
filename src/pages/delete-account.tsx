@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import Container from "@material-ui/core/Container";
 import Avatar from "@material-ui/core/Avatar";
@@ -8,11 +8,13 @@ import Typography from "@material-ui/core/Typography";
 import { useForm } from "react-hook-form";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useReactiveVar } from "@apollo/client";
 import { deleteUser, deleteUserVariables } from "../__generated__/deleteUser";
 import { useLogout } from "../hooks/use-logout";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { FormError } from "../components/form-error";
+import { isLoggedInVar } from "../apollo";
+import { useHistory } from "react-router-dom";
 
 type IForm = {
   password: string;
@@ -66,6 +68,8 @@ const CssTextField = withStyles({
 })(TextField);
 
 export const DeleteAccount = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const history = useHistory();
   const classes = useStyles();
   const [logoutMutation] = useLogout();
   const {
@@ -75,6 +79,12 @@ export const DeleteAccount = () => {
     formState,
     errors,
   } = useForm<IForm>({ mode: "onChange" });
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      history.push("/");
+    }
+  }, [history, isLoggedIn]);
 
   const onSubmit = () => {
     const { password } = getValues();
