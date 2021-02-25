@@ -123,6 +123,7 @@ export const UploadProduct = () => {
   const history = useHistory();
   const classes = useStyles();
   const [fileName, setFileName] = useState<string | null>();
+  const [productId, setProductId] = useState<number | null>();
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -131,8 +132,7 @@ export const UploadProduct = () => {
   }, [history, isLoggedIn]);
 
   const onSubmit = () => {
-    const { productName, description, startPrice, image } = getValues();
-    console.log(image[0]);
+    const { productName, description, startPrice } = getValues();
     uploadProductMutation({
       variables: {
         input: {
@@ -156,6 +156,10 @@ export const UploadProduct = () => {
           file: image[0],
         },
       });
+      setProductId(productId);
+    } else {
+      history.push(`/product/${productId}`);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -164,7 +168,8 @@ export const UploadProduct = () => {
       uploadImage: { ok },
     } = data;
     if (ok) {
-      history.push("/");
+      history.push(`/product/${productId}`);
+      window.scrollTo(0, 0);
     }
   };
 
