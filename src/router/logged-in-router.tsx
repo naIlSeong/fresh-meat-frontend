@@ -9,6 +9,8 @@ import { DeleteAccount } from "../pages/delete-account";
 import { UserDetail } from "../pages/user-detail";
 import { MyProfile } from "../pages/my-profile";
 import { ProductDetail } from "../pages/product-detail";
+import { Login } from "../pages/login";
+import { Signup } from "../pages/signup";
 
 export const LoggedInRouter = () => {
   return (
@@ -25,6 +27,14 @@ export const LoggedInRouter = () => {
         <Route path="/my-profile" exact>
           <Header title="My Profile" />
           <MyProfile />
+        </Route>
+        <Route path="/login" exact>
+          <Header title="Login" />
+          <Login />
+        </Route>
+        <Route path="/signup" exact>
+          <Header title="Sign up" />
+          <Signup />
         </Route>
         <Route path="/user/:id" exact>
           <Header title="Profile" />

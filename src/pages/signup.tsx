@@ -175,8 +175,8 @@ export const Signup = () => {
           <Grid container>
             <Grid item>
               Already have an account?{" "}
-              <Link href="/" variant="body2" color="secondary">
-                Sign in
+              <Link href="/login" variant="body2" color="secondary">
+                Log in
               </Link>
             </Grid>
           </Grid>

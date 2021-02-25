@@ -8,6 +8,8 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { useMe } from "../hooks/use-me";
 import { useLogout } from "../hooks/use-logout";
+import { isLoggedInVar } from "../apollo";
+import { useReactiveVar } from "@apollo/client";
 
 type IProps = {
   title: string;
@@ -26,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const Header = ({ title }: IProps) => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const history = useHistory();
   const classes = useStyles();
   const { data, loading } = useMe();
@@ -83,34 +86,57 @@ export const Header = ({ title }: IProps) => {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <MenuItem
-            onClick={() => {
-              if (loading) {
-                handleClose();
-              }
-              if (!loading && data) {
-                history.push("/my-profile");
-                handleClose();
-              }
-            }}
-          >
-            Profile
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              history.push("/edit-account");
-              handleClose();
-            }}
-          >
-            Edit account
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              logoutMutation();
-            }}
-          >
-            Logout
-          </MenuItem>
+          {isLoggedIn ? (
+            <>
+              <MenuItem
+                onClick={() => {
+                  if (loading) {
+                    handleClose();
+                  }
+                  if (!loading && data) {
+                    history.push("/my-profile");
+                    handleClose();
+                  }
+                }}
+              >
+                Profile
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  history.push("/edit-account");
+                  handleClose();
+                }}
+              >
+                Edit account
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  logoutMutation();
+                }}
+              >
+                Logout
+              </MenuItem>
+            </>
+          ) : (
+            <>
+              <MenuItem
+                onClick={() => {
+                  history.push("/login");
+                  handleClose();
+                }}
+              >
+                Login
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  history.push("/sign-up");
+                  handleClose();
+                }}
+              >
+                Sign Up
+              </MenuItem>
+            </>
+          )}
         </Menu>
       </Toolbar>
     </React.Fragment>
