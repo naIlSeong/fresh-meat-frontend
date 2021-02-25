@@ -10,6 +10,7 @@ import { Helmet } from "react-helmet-async";
 import { useHistory, useParams } from "react-router-dom";
 import { userDetail, userDetailVariables } from "../__generated__/userDetail";
 import Countdown from "react-countdown";
+import { NotFound } from "../components/not-found";
 
 type IParams = {
   id: string;
@@ -156,7 +157,9 @@ export const UserDetail = () => {
     }
   };
 
-  return (
+  return !data?.userDetail.ok ? (
+    <NotFound />
+  ) : (
     <React.Fragment>
       <Helmet>
         <title>{`Fresh Meat - ${data?.userDetail.user?.username}`}</title>

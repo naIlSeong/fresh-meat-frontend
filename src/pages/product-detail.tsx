@@ -36,6 +36,7 @@ import {
   deleteProductVariables,
 } from "../__generated__/deleteProduct";
 import { isLoggedInVar } from "../apollo";
+import { NotFound } from "../components/not-found";
 
 type IParams = {
   id: string;
@@ -273,7 +274,9 @@ export const ProductDetail = () => {
     productDetailQuery,
   ]);
 
-  return (
+  return !productDetailOutput?.productDetail.ok ? (
+    <NotFound />
+  ) : (
     <React.Fragment>
       <Helmet>
         <title>{`Fresh Meat - ${productDetailOutput?.productDetail.product?.productName}`}</title>
