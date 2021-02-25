@@ -11,6 +11,7 @@ import { MyProfile } from "../pages/my-profile";
 import { ProductDetail } from "../pages/product-detail";
 import { Login } from "../pages/login";
 import { Signup } from "../pages/signup";
+import { UploadProduct } from "../pages/upload-product";
 
 export const LoggedInRouter = () => {
   return (
@@ -28,6 +29,10 @@ export const LoggedInRouter = () => {
         <Route path="/my-profile" exact>
           <Header title="My Profile" />
           <MyProfile />
+        </Route>
+        <Route path="/product/new" exact>
+          <Header title="Upload Product" />
+          <UploadProduct />
         </Route>
 
         {/* Public */}

@@ -129,7 +129,7 @@ export const Header = ({ title }: IProps) => {
               </MenuItem>
               <MenuItem
                 onClick={() => {
-                  history.push("/sign-up");
+                  history.push("/signup");
                   handleClose();
                 }}
               >
