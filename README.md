@@ -151,3 +151,26 @@ But `clearStore()`will not refetch any active queries after clearing out cache.
 
 Docs: https://www.apollographql.com/docs/react/api/core/ApolloClient/
 https://www.apollographql.com/docs/react/api/core/ApolloClient/#functions
+
+---
+
+#### **Issue #5**
+
+When uploadImage server throw error `createReadStream is not a function`
+
+**Solution**
+
+1. install some dependencies `apollo-upload-client` & `@types/apollo-upload-client`
+2. Fix `apollo.ts` like :
+
+```
+import { createUploadLink } from "apollo-upload-client";
+
+...
+const link = createUploadLink({
+  uri: "https://localhost:4000/graphql",
+  credentials: "include",
+});
+```
+
+Docs: https://www.apollographql.com/blog/graphql-file-uploads-with-react-hooks-typescript-amazon-s3-tutorial-ef39d21066a2/

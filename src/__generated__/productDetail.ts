@@ -10,19 +10,19 @@ import { ProductDetailDto, Progress } from "./globalTypes";
 // ====================================================
 
 export interface productDetail_productDetail_product_seller {
-  __typename: "User";
+  __typename: "UserObjectType";
   id: number;
   username: string;
 }
 
 export interface productDetail_productDetail_product_bidder {
-  __typename: "User";
+  __typename: "UserObjectType";
   id: number;
   username: string;
 }
 
 export interface productDetail_productDetail_product {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   startPrice: number;

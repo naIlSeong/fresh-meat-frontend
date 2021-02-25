@@ -10,7 +10,7 @@ import { Progress } from "./globalTypes";
 // ====================================================
 
 export interface myProfile_myProfile_uploadedProduct {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;
@@ -18,7 +18,7 @@ export interface myProfile_myProfile_uploadedProduct {
 }
 
 export interface myProfile_myProfile_inProgressProduct {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;
@@ -26,21 +26,21 @@ export interface myProfile_myProfile_inProgressProduct {
 }
 
 export interface myProfile_myProfile_closedProduct {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;
 }
 
 export interface myProfile_myProfile_paidProduct {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;
 }
 
 export interface myProfile_myProfile_completedProduct {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;

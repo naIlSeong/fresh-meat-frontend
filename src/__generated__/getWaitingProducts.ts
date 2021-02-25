@@ -10,12 +10,12 @@ import { GetAllProductsDto } from "./globalTypes";
 // ====================================================
 
 export interface getWaitingProducts_getWaitingProducts_products_pictures {
-  __typename: "File";
+  __typename: "FileObjectType";
   url: string;
 }
 
 export interface getWaitingProducts_getWaitingProducts_products {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   description: string | null;

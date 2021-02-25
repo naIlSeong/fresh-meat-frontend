@@ -1,4 +1,4 @@
-import { useReactiveVar } from "@apollo/client";
+import { gql, useMutation, useReactiveVar } from "@apollo/client";
 import {
   Avatar,
   Button,
@@ -18,6 +18,14 @@ import { useForm } from "react-hook-form";
 import { SubmitButton } from "../components/button";
 import indigo from "@material-ui/core/colors/indigo";
 import { FormError } from "../components/form-error";
+import {
+  uploadProduct,
+  uploadProductVariables,
+} from "../__generated__/uploadProduct";
+import {
+  uploadImage,
+  uploadImageVariables,
+} from "../__generated__/uploadImage";
 
 type IForm = {
   productName: string;
@@ -29,6 +37,25 @@ type IForm = {
 type IFile = {
   [index: number]: { name: string };
 };
+
+const UPLOAD_PRODUCT = gql`
+  mutation uploadProduct($input: UploadProductDto!) {
+    uploadProduct(input: $input) {
+      ok
+      error
+      productId
+    }
+  }
+`;
+
+const UPLOAD_IMAGE = gql`
+  mutation uploadImage($productId: Float!, $file: Upload!) {
+    uploadImage(productId: $productId, file: $file) {
+      ok
+      error
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -70,6 +97,12 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "#650000",
     },
   },
+  loading: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: theme.spacing(24),
+  },
 }));
 
 const CssTextField = withStyles({
@@ -98,9 +131,56 @@ export const UploadProduct = () => {
   }, [history, isLoggedIn]);
 
   const onSubmit = () => {
-    // TODO
     const { productName, description, startPrice, image } = getValues();
+    console.log(image[0]);
+    uploadProductMutation({
+      variables: {
+        input: {
+          productName,
+          description,
+          startPrice: +startPrice,
+        },
+      },
+    });
   };
+
+  const onProductCompleted = (data: uploadProduct) => {
+    const { image } = getValues();
+    const {
+      uploadProduct: { ok, productId },
+    } = data;
+    if (ok && productId && image[0]) {
+      uploadImageMutation({
+        variables: {
+          productId,
+          file: image[0],
+        },
+      });
+    }
+  };
+
+  const onImageCompleted = (data: uploadImage) => {
+    const {
+      uploadImage: { ok },
+    } = data;
+    if (ok) {
+      history.push("/");
+    }
+  };
+
+  const [
+    uploadProductMutation,
+    { data: uploadProductOutput, loading: uploadProductLoading },
+  ] = useMutation<uploadProduct, uploadProductVariables>(UPLOAD_PRODUCT, {
+    onCompleted: onProductCompleted,
+  });
+
+  const [
+    uploadImageMutation,
+    { data: uploadImageOutput, loading: uploadImageLoading },
+  ] = useMutation<uploadImage, uploadImageVariables>(UPLOAD_IMAGE, {
+    onCompleted: onImageCompleted,
+  });
 
   const {
     register,
@@ -120,8 +200,8 @@ export const UploadProduct = () => {
         <title>Fresh Meat - Upload Product</title>
       </Helmet>
       <main>
-        <Container maxWidth="xs">
-          <div className={classes.paper}>
+        <Container maxWidth="md">
+          <Container className={classes.paper} maxWidth="xs">
             {/* Title */}
             <Avatar className={classes.avatar}>
               <PublishOutlinedIcon />
@@ -148,7 +228,6 @@ export const UploadProduct = () => {
                 required
                 inputRef={register({ required: true })}
               />
-              {/* TODO : Error */}
 
               {/* Description */}
               <CssTextField
@@ -179,7 +258,6 @@ export const UploadProduct = () => {
                   ),
                 }}
               />
-              {/* TODO : Error */}
               {errors.startPrice?.type === "pattern" && (
                 <FormError errorMessage="Only numbers are allowed" />
               )}
@@ -225,12 +303,21 @@ export const UploadProduct = () => {
               {/* Submit button */}
               <SubmitButton
                 message="Upload"
-                // TODO : loading
-                loading={false}
+                loading={uploadProductLoading || uploadImageLoading}
                 validate={!formState.isValid}
               />
+
+              {/* Error */}
+              {uploadProductOutput?.uploadProduct.error && (
+                <FormError
+                  errorMessage={uploadProductOutput.uploadProduct.error}
+                />
+              )}
+              {uploadImageOutput?.uploadImage.error && (
+                <FormError errorMessage={uploadImageOutput.uploadImage.error} />
+              )}
             </form>
-          </div>
+          </Container>
         </Container>
       </main>
     </React.Fragment>

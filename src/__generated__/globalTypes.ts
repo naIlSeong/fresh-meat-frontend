@@ -62,6 +62,12 @@ export interface UpdateUserDto {
   password?: string | null;
 }
 
+export interface UploadProductDto {
+  productName?: string | null;
+  description?: string | null;
+  startPrice?: number | null;
+}
+
 export interface UserDetailDto {
   userId: number;
 }

@@ -10,13 +10,13 @@ import { UserDetailDto } from "./globalTypes";
 // ====================================================
 
 export interface userDetail_userDetail_user {
-  __typename: "User";
+  __typename: "UserObjectType";
   id: number;
   username: string;
 }
 
 export interface userDetail_userDetail_inProgress {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   bidPrice: number | null;
@@ -24,7 +24,7 @@ export interface userDetail_userDetail_inProgress {
 }
 
 export interface userDetail_userDetail_waiting {
-  __typename: "Product";
+  __typename: "ProductObjectType";
   id: number;
   productName: string;
   startPrice: number;

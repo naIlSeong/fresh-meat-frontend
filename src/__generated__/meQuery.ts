@@ -8,7 +8,7 @@
 // ====================================================
 
 export interface meQuery_me {
-  __typename: "User";
+  __typename: "UserObjectType";
   id: number;
   username: string;
   email: string;
