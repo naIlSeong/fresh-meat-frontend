@@ -94,6 +94,7 @@ export const Login = () => {
     if (ok) {
       isLoggedInVar(true);
       history.push("/");
+      window.location.reload();
     }
   };
 

@@ -24,6 +24,7 @@ export const useLogout = () => {
       history.push("/");
       Cookies.remove("connect.sid");
       client.clearStore();
+      window.location.reload();
     }
   };
 

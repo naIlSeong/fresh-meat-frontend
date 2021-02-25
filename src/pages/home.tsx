@@ -11,7 +11,7 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import {
   getWaitingProducts,
   getWaitingProductsVariables,
@@ -38,6 +38,7 @@ import {
   updateBiddingVariables,
 } from "../__generated__/updateBidding";
 import Countdown from "react-countdown";
+import { isLoggedInVar } from "../apollo";
 
 type IForm = {
   bidPrice: string;
@@ -165,6 +166,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const Home = () => {
   const classes = useStyles();
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const history = useHistory();
   const [tab, setTab] = useState(true);
   const [inProgressPage, setInProgressPage] = useState(1);
@@ -337,17 +339,21 @@ export const Home = () => {
               </Grid>
             </Grid>
           </Container>
-          <Container className={classes.uploadContainer}>
-            <Button
-              className={classes.uploadButton}
-              variant={"contained"}
-              onClick={() => {
-                history.push("/product/new");
-              }}
-            >
-              Upload
-            </Button>
-          </Container>
+
+          {/* Upload Button */}
+          {isLoggedIn && (
+            <Container className={classes.uploadContainer}>
+              <Button
+                className={classes.uploadButton}
+                variant={"contained"}
+                onClick={() => {
+                  history.push("/product/new");
+                }}
+              >
+                Upload
+              </Button>
+            </Container>
+          )}
         </div>
 
         {/* Product Card */}
@@ -399,8 +405,6 @@ export const Home = () => {
                               {product.bidPrice} ₩
                             </Typography>
 
-                            {/* TODO : Display remaining time */}
-
                             <Container
                               style={{
                                 minHeight: "50px",
@@ -425,19 +429,21 @@ export const Home = () => {
                             >
                               View
                             </Button>
-                            <Button
-                              size="small"
-                              color="primary"
-                              onClick={() => {
-                                handleClickOpen(
-                                  product.id,
-                                  product.bidPrice ? product.bidPrice : 33,
-                                  true
-                                );
-                              }}
-                            >
-                              Bidding
-                            </Button>
+                            {isLoggedIn && (
+                              <Button
+                                size="small"
+                                color="primary"
+                                onClick={() => {
+                                  handleClickOpen(
+                                    product.id,
+                                    product.bidPrice ? product.bidPrice : 33,
+                                    true
+                                  );
+                                }}
+                              >
+                                Bidding
+                              </Button>
+                            )}
                           </CardActions>
                         </Card>
                       </Grid>
@@ -561,19 +567,21 @@ export const Home = () => {
                             >
                               View
                             </Button>
-                            <Button
-                              size="small"
-                              color="primary"
-                              onClick={() => {
-                                handleClickOpen(
-                                  product.id,
-                                  product.startPrice,
-                                  false
-                                );
-                              }}
-                            >
-                              Bidding
-                            </Button>
+                            {isLoggedIn && (
+                              <Button
+                                size="small"
+                                color="primary"
+                                onClick={() => {
+                                  handleClickOpen(
+                                    product.id,
+                                    product.startPrice,
+                                    false
+                                  );
+                                }}
+                              >
+                                Bidding
+                              </Button>
+                            )}
                           </CardActions>
                         </Card>
                       </Grid>

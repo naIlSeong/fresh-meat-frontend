@@ -20,7 +20,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { Progress } from "../__generated__/globalTypes";
-import { gql, useLazyQuery, useMutation } from "@apollo/client";
+import { gql, useLazyQuery, useMutation, useReactiveVar } from "@apollo/client";
 import { useMe } from "../hooks/use-me";
 import {
   productDetail,
@@ -35,6 +35,7 @@ import {
   deleteProduct,
   deleteProductVariables,
 } from "../__generated__/deleteProduct";
+import { isLoggedInVar } from "../apollo";
 
 type IParams = {
   id: string;
@@ -159,6 +160,7 @@ const useStyles = makeStyles((theme) => ({
 
 export const ProductDetail = () => {
   const { id } = useParams<IParams>();
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
   const classes = useStyles();
   const history = useHistory();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -399,232 +401,234 @@ export const ProductDetail = () => {
               </List>
 
               {/* Button */}
-              <Container className={classes.buttonContainer}>
-                {/* closed -> paid */}
-                {productDetailOutput?.productDetail.product?.bidder &&
-                  meOutput?.me.id ===
-                    productDetailOutput.productDetail.product.bidder.id &&
-                  productDetailOutput.productDetail.product.progress ===
-                    Progress.Closed && (
-                    <>
-                      <Button
-                        className={classes.button}
-                        onClick={handleClickOpen}
-                      >
-                        Request confirm
-                      </Button>
-
-                      {/* Dialog */}
-                      <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                      >
-                        <DialogTitle id="alert-dialog-title">
+              {isLoggedIn && (
+                <Container className={classes.buttonContainer}>
+                  {/* closed -> paid */}
+                  {productDetailOutput?.productDetail.product?.bidder &&
+                    meOutput?.me.id ===
+                      productDetailOutput.productDetail.product.bidder.id &&
+                    productDetailOutput.productDetail.product.progress ===
+                      Progress.Closed && (
+                      <>
+                        <Button
+                          className={classes.button}
+                          onClick={handleClickOpen}
+                        >
                           Request confirm
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-description">
-                            Have you paid and would you like to ask for
-                            confirmation?
-                          </DialogContentText>
-                          {editProgressOutput?.editProgress.error && (
-                            <FormError
-                              errorMessage={
-                                editProgressOutput.editProgress.error
-                              }
-                            />
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleClose} color="primary">
-                            No
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (productDetailOutput.productDetail.product) {
-                                editProgressMutation({
-                                  variables: {
-                                    input: {
-                                      productId:
-                                        productDetailOutput.productDetail
-                                          .product.id,
-                                    },
-                                  },
-                                });
-                              }
-                            }}
-                            color="primary"
-                            autoFocus
-                          >
-                            {editProgressLoading ? (
-                              <CircularProgress size={14} />
-                            ) : (
-                              "Yes"
+                        </Button>
+
+                        {/* Dialog */}
+                        <Dialog
+                          open={open}
+                          onClose={handleClose}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            Request confirm
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              Have you paid and would you like to ask for
+                              confirmation?
+                            </DialogContentText>
+                            {editProgressOutput?.editProgress.error && (
+                              <FormError
+                                errorMessage={
+                                  editProgressOutput.editProgress.error
+                                }
+                              />
                             )}
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </>
-                  )}
-
-                {/* paid -> completed */}
-                {meOutput?.me.id ===
-                  productDetailOutput?.productDetail.product?.seller.id &&
-                  productDetailOutput?.productDetail.product?.progress ===
-                    Progress.Paid && (
-                    <>
-                      <Button
-                        className={classes.button}
-                        onClick={handleClickOpen}
-                      >
-                        Confirm payment
-                      </Button>
-
-                      {/* Dialog */}
-                      <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                      >
-                        <DialogTitle id="alert-dialog-title">
-                          Confirm payment
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-description">
-                            Have you received payment and want to complete the
-                            transaction?
-                          </DialogContentText>
-                          {editProgressOutput?.editProgress.error && (
-                            <FormError
-                              errorMessage={
-                                editProgressOutput.editProgress.error
-                              }
-                            />
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleClose} color="primary">
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (productDetailOutput.productDetail.product) {
-                                editProgressMutation({
-                                  variables: {
-                                    input: {
-                                      productId:
-                                        productDetailOutput.productDetail
-                                          .product.id,
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                              No
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                if (productDetailOutput.productDetail.product) {
+                                  editProgressMutation({
+                                    variables: {
+                                      input: {
+                                        productId:
+                                          productDetailOutput.productDetail
+                                            .product.id,
+                                      },
                                     },
-                                  },
-                                });
-                              }
-                            }}
-                            color="primary"
-                            autoFocus
-                          >
-                            {editProgressLoading ? (
-                              <CircularProgress size={14} />
-                            ) : (
-                              "Yes"
-                            )}
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </>
-                  )}
+                                  });
+                                }
+                              }}
+                              color="primary"
+                              autoFocus
+                            >
+                              {editProgressLoading ? (
+                                <CircularProgress size={14} />
+                              ) : (
+                                "Yes"
+                              )}
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </>
+                    )}
 
-                {/* Edit Button */}
-                {meOutput?.me.id ===
-                  productDetailOutput?.productDetail.product?.seller.id &&
-                  productDetailOutput?.productDetail.product?.progress ===
-                    Progress.Waiting && (
-                    <Button
-                      className={classes.editButton}
-                      onClick={() => {
-                        history.push(
-                          `/edit-product/${productDetailOutput.productDetail.product?.id}`
-                        );
-                        window.scrollTo(0, 0);
-                      }}
-                    >
-                      Edit product
-                    </Button>
-                  )}
-
-                {/* Delete Button */}
-                {meOutput?.me.id ===
-                  productDetailOutput?.productDetail.product?.seller.id &&
-                  (productDetailOutput?.productDetail.product?.progress ===
-                    Progress.Waiting ||
+                  {/* paid -> completed */}
+                  {meOutput?.me.id ===
+                    productDetailOutput?.productDetail.product?.seller.id &&
                     productDetailOutput?.productDetail.product?.progress ===
-                      Progress.Completed) && (
-                    <>
-                      <Button
-                        className={classes.deleteButton}
-                        onClick={handleClickOpen}
-                      >
-                        Delete product
-                      </Button>
+                      Progress.Paid && (
+                      <>
+                        <Button
+                          className={classes.button}
+                          onClick={handleClickOpen}
+                        >
+                          Confirm payment
+                        </Button>
 
-                      {/* Dialog */}
-                      <Dialog
-                        open={open}
-                        onClose={handleClose}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description"
-                      >
-                        <DialogTitle id="alert-dialog-title">
-                          Delete product
-                        </DialogTitle>
-                        <DialogContent>
-                          <DialogContentText id="alert-dialog-description">
-                            Are you sure you want to delete the product?
-                          </DialogContentText>
-                          {deleteProductOutput?.deleteProduct.error && (
-                            <FormError
-                              errorMessage={
-                                deleteProductOutput.deleteProduct.error
-                              }
-                            />
-                          )}
-                        </DialogContent>
-                        <DialogActions>
-                          <Button onClick={handleClose} color="primary">
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              // TODO : Delete Product
-                              if (productDetailOutput.productDetail.product) {
-                                deleteProductMutation({
-                                  variables: {
-                                    input: {
-                                      productId:
-                                        productDetailOutput.productDetail
-                                          .product.id,
-                                    },
-                                  },
-                                });
-                              }
-                            }}
-                            color="primary"
-                            autoFocus
-                          >
-                            {deleteProductLoading ? (
-                              <CircularProgress size={14} />
-                            ) : (
-                              "Yes"
+                        {/* Dialog */}
+                        <Dialog
+                          open={open}
+                          onClose={handleClose}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            Confirm payment
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              Have you received payment and want to complete the
+                              transaction?
+                            </DialogContentText>
+                            {editProgressOutput?.editProgress.error && (
+                              <FormError
+                                errorMessage={
+                                  editProgressOutput.editProgress.error
+                                }
+                              />
                             )}
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
-                    </>
-                  )}
-              </Container>
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                if (productDetailOutput.productDetail.product) {
+                                  editProgressMutation({
+                                    variables: {
+                                      input: {
+                                        productId:
+                                          productDetailOutput.productDetail
+                                            .product.id,
+                                      },
+                                    },
+                                  });
+                                }
+                              }}
+                              color="primary"
+                              autoFocus
+                            >
+                              {editProgressLoading ? (
+                                <CircularProgress size={14} />
+                              ) : (
+                                "Yes"
+                              )}
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </>
+                    )}
+
+                  {/* Edit Button */}
+                  {meOutput?.me.id ===
+                    productDetailOutput?.productDetail.product?.seller.id &&
+                    productDetailOutput?.productDetail.product?.progress ===
+                      Progress.Waiting && (
+                      <Button
+                        className={classes.editButton}
+                        onClick={() => {
+                          history.push(
+                            `/edit-product/${productDetailOutput.productDetail.product?.id}`
+                          );
+                          window.scrollTo(0, 0);
+                        }}
+                      >
+                        Edit product
+                      </Button>
+                    )}
+
+                  {/* Delete Button */}
+                  {meOutput?.me.id ===
+                    productDetailOutput?.productDetail.product?.seller.id &&
+                    (productDetailOutput?.productDetail.product?.progress ===
+                      Progress.Waiting ||
+                      productDetailOutput?.productDetail.product?.progress ===
+                        Progress.Completed) && (
+                      <>
+                        <Button
+                          className={classes.deleteButton}
+                          onClick={handleClickOpen}
+                        >
+                          Delete product
+                        </Button>
+
+                        {/* Dialog */}
+                        <Dialog
+                          open={open}
+                          onClose={handleClose}
+                          aria-labelledby="alert-dialog-title"
+                          aria-describedby="alert-dialog-description"
+                        >
+                          <DialogTitle id="alert-dialog-title">
+                            Delete product
+                          </DialogTitle>
+                          <DialogContent>
+                            <DialogContentText id="alert-dialog-description">
+                              Are you sure you want to delete the product?
+                            </DialogContentText>
+                            {deleteProductOutput?.deleteProduct.error && (
+                              <FormError
+                                errorMessage={
+                                  deleteProductOutput.deleteProduct.error
+                                }
+                              />
+                            )}
+                          </DialogContent>
+                          <DialogActions>
+                            <Button onClick={handleClose} color="primary">
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                // TODO : Delete Product
+                                if (productDetailOutput.productDetail.product) {
+                                  deleteProductMutation({
+                                    variables: {
+                                      input: {
+                                        productId:
+                                          productDetailOutput.productDetail
+                                            .product.id,
+                                      },
+                                    },
+                                  });
+                                }
+                              }}
+                              color="primary"
+                              autoFocus
+                            >
+                              {deleteProductLoading ? (
+                                <CircularProgress size={14} />
+                              ) : (
+                                "Yes"
+                              )}
+                            </Button>
+                          </DialogActions>
+                        </Dialog>
+                      </>
+                    )}
+                </Container>
+              )}
             </div>
           )}
         </Container>
