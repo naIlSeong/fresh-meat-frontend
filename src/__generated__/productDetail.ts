@@ -9,6 +9,12 @@ import { ProductDetailDto, Progress } from "./globalTypes";
 // GraphQL query operation: productDetail
 // ====================================================
 
+export interface productDetail_productDetail_product_picture {
+  __typename: "FileObjectType";
+  key: string;
+  fileName: string;
+}
+
 export interface productDetail_productDetail_product_seller {
   __typename: "UserObjectType";
   id: number;
@@ -27,6 +33,8 @@ export interface productDetail_productDetail_product {
   productName: string;
   startPrice: number;
   bidPrice: number | null;
+  description: string | null;
+  picture: productDetail_productDetail_product_picture | null;
   seller: productDetail_productDetail_product_seller;
   bidder: productDetail_productDetail_product_bidder | null;
   progress: Progress;

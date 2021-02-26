@@ -9,7 +9,7 @@ import { GetAllProductsDto } from "./globalTypes";
 // GraphQL query operation: getInProgressProducts
 // ====================================================
 
-export interface getInProgressProducts_getInProgressProducts_products_pictures {
+export interface getInProgressProducts_getInProgressProducts_products_picture {
   __typename: "FileObjectType";
   url: string;
 }
@@ -21,7 +21,7 @@ export interface getInProgressProducts_getInProgressProducts_products {
   description: string | null;
   bidPrice: number | null;
   remainingTime: any | null;
-  pictures: getInProgressProducts_getInProgressProducts_products_pictures[];
+  picture: getInProgressProducts_getInProgressProducts_products_picture | null;
 }
 
 export interface getInProgressProducts_getInProgressProducts {

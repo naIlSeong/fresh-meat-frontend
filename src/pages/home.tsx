@@ -62,7 +62,7 @@ const GET_IN_PROGRESS_PRODUCTS = gql`
         description
         bidPrice
         remainingTime
-        pictures {
+        picture {
           url
         }
       }
@@ -82,7 +82,7 @@ const GET_WAITING_PRODUCTS = gql`
         description
         startPrice
         remainingTime
-        pictures {
+        picture {
           url
         }
       }
@@ -382,8 +382,8 @@ export const Home = () => {
                           <CardMedia
                             className={classes.cardImage}
                             image={
-                              product.pictures.length !== 0
-                                ? product.pictures[0].url
+                              product.picture
+                                ? product.picture.url
                                 : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
                             }
                             title="Image title"
@@ -526,8 +526,8 @@ export const Home = () => {
                           <CardMedia
                             className={classes.cardImage}
                             image={
-                              product.pictures.length !== 0
-                                ? product.pictures[0].url
+                              product.picture
+                                ? product.picture.url
                                 : "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
                             }
                             title="Image title"

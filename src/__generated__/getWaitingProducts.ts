@@ -9,7 +9,7 @@ import { GetAllProductsDto } from "./globalTypes";
 // GraphQL query operation: getWaitingProducts
 // ====================================================
 
-export interface getWaitingProducts_getWaitingProducts_products_pictures {
+export interface getWaitingProducts_getWaitingProducts_products_picture {
   __typename: "FileObjectType";
   url: string;
 }
@@ -21,7 +21,7 @@ export interface getWaitingProducts_getWaitingProducts_products {
   description: string | null;
   startPrice: number;
   remainingTime: any | null;
-  pictures: getWaitingProducts_getWaitingProducts_products_pictures[];
+  picture: getWaitingProducts_getWaitingProducts_products_picture | null;
 }
 
 export interface getWaitingProducts_getWaitingProducts {

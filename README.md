@@ -39,8 +39,8 @@
 
 - **Product**
 
-  - [ ] Upload Product **(/product/new)**
-  - [ ] Upload Image
+  - [x] Upload Product **(/product/new)**
+  - [x] Upload Image
   - [x] Product Detail **(/product/:id)**
   - [x] Edit Progress
   - [x] Delete Product **(/product/:id/delete)**

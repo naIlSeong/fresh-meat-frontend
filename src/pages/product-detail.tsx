@@ -42,7 +42,7 @@ type IParams = {
   id: string;
 };
 
-const PRODUCT_DETAIL = gql`
+export const PRODUCT_DETAIL = gql`
   query productDetail($input: ProductDetailDto!) {
     productDetail(input: $input) {
       ok
@@ -52,6 +52,11 @@ const PRODUCT_DETAIL = gql`
         productName
         startPrice
         bidPrice
+        description
+        picture {
+          key
+          fileName
+        }
         seller {
           id
           username

@@ -12,6 +12,7 @@ import { ProductDetail } from "../pages/product-detail";
 import { Login } from "../pages/login";
 import { Signup } from "../pages/signup";
 import { UploadProduct } from "../pages/upload-product";
+import { EditProduct } from "../pages/edit-product";
 
 export const LoggedInRouter = () => {
   return (
@@ -33,6 +34,10 @@ export const LoggedInRouter = () => {
         <Route path="/product/new" exact>
           <Header title="Upload Product" />
           <UploadProduct />
+        </Route>
+        <Route path="/edit-product/:id" exact>
+          <Header title="Edit Product" />
+          <EditProduct />
         </Route>
 
         {/* Public */}
