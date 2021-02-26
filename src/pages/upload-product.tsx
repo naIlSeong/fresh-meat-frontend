@@ -48,7 +48,7 @@ const UPLOAD_PRODUCT = gql`
   }
 `;
 
-const UPLOAD_IMAGE = gql`
+export const UPLOAD_IMAGE = gql`
   mutation uploadImage($productId: Float!, $file: Upload!) {
     uploadImage(productId: $productId, file: $file) {
       ok

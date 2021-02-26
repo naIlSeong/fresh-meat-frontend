@@ -1,4 +1,4 @@
-import { useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 import {
   Avatar,
   Button,
@@ -24,21 +24,39 @@ import { useForm } from "react-hook-form";
 import { SubmitButton } from "../components/button";
 import { FormError } from "../components/form-error";
 import indigo from "@material-ui/core/colors/indigo";
+import { UPLOAD_IMAGE } from "./upload-product";
+import {
+  editProduct,
+  editProductVariables,
+} from "../__generated__/editProduct";
+import {
+  uploadImage,
+  uploadImageVariables,
+} from "../__generated__/uploadImage";
 
 interface IParam {
   id: string;
 }
 
 interface IForm {
-  productName?: string;
+  productName: string;
   description?: string;
-  startPrice?: string;
+  startPrice: string;
   image: IFile;
 }
 
 interface IFile {
   [index: number]: { name: string };
 }
+
+const EDIT_PRODUCT = gql`
+  mutation editProduct($input: EditProductDto!) {
+    editProduct(input: $input) {
+      ok
+      error
+    }
+  }
+`;
 
 const useStyles = makeStyles((theme) => ({
   loading: {
@@ -106,6 +124,9 @@ export const EditProduct = () => {
   const history = useHistory();
   const classes = useStyles();
   const [fileName, setFileName] = useState<string | null>();
+  const [newImage, setNewImage] = useState<boolean>(false);
+  const [deleteImage, setDeleteImage] = useState<boolean>(false);
+  const [productId, setProductId] = useState<number | null>();
   const { data: meOutput, loading: meLoading } = useMe();
   const [
     productDetailQuery,
@@ -149,9 +170,68 @@ export const EditProduct = () => {
   });
 
   const onSubmit = () => {
-    const { productName, description, startPrice, image } = getValues();
-    console.log(image);
+    const { productName, description, startPrice } = getValues();
+    setProductId(productDetailOutput?.productDetail.product?.id);
+    editProductMtation({
+      variables: {
+        input: {
+          productId: +id,
+          productName,
+          description,
+          startPrice: +startPrice,
+          deleteImage,
+        },
+      },
+    });
   };
+
+  const onEditCompleted = (data: editProduct) => {
+    const { image } = getValues();
+    const {
+      editProduct: { ok },
+    } = data;
+
+    if (ok) {
+      if (newImage && productDetailOutput?.productDetail.product) {
+        uploadImageMutation({
+          variables: {
+            productId: productDetailOutput.productDetail.product.id,
+            file: image[0],
+          },
+        });
+      }
+      if (!newImage) {
+        history.push(`/product/${productId}`);
+        window.scrollTo(0, 0);
+        window.location.reload();
+      }
+    }
+  };
+
+  const onUploadCompleted = (data: uploadImage) => {
+    const {
+      uploadImage: { ok },
+    } = data;
+    if (ok) {
+      history.push(`/product/${productId}`);
+      window.scrollTo(0, 0);
+      window.location.reload();
+    }
+  };
+
+  const [
+    editProductMtation,
+    { data: editProductOutput, loading: editProductLoading },
+  ] = useMutation<editProduct, editProductVariables>(EDIT_PRODUCT, {
+    onCompleted: onEditCompleted,
+  });
+
+  const [
+    uploadImageMutation,
+    { data: uploadImageOutput, loading: uploadImageLoading },
+  ] = useMutation<uploadImage, uploadImageVariables>(UPLOAD_IMAGE, {
+    onCompleted: onUploadCompleted,
+  });
 
   return (
     <React.Fragment>
@@ -196,11 +276,12 @@ export const EditProduct = () => {
                     label="New product name"
                     type="text"
                     id="productName"
+                    required
                     defaultValue={
                       productDetailOutput.productDetail.product.productName
                     }
+                    inputRef={register({ required: true })}
                   />
-                  {/* TODO : Error */}
 
                   {/* Description */}
                   <CssTextField
@@ -216,8 +297,8 @@ export const EditProduct = () => {
                         ? productDetailOutput.productDetail.product.description
                         : ""
                     }
+                    inputRef={register}
                   />
-                  {/* TODO : Error */}
 
                   {/* Starting price */}
                   <CssTextField
@@ -228,6 +309,7 @@ export const EditProduct = () => {
                     label="New starting price"
                     type="text"
                     id="startPrice"
+                    required
                     defaultValue={
                       productDetailOutput.productDetail.product.startPrice
                     }
@@ -254,6 +336,8 @@ export const EditProduct = () => {
                         ref={register}
                         onChange={() => {
                           setFileName(watch().image[0].name);
+                          setNewImage(true);
+                          setDeleteImage(true);
                         }}
                       />
                       Select File
@@ -267,6 +351,8 @@ export const EditProduct = () => {
                           onClick={() => {
                             reset();
                             setFileName(null);
+                            setNewImage(false);
+                            setDeleteImage(true);
                           }}
                         >
                           Delete
@@ -279,9 +365,18 @@ export const EditProduct = () => {
                   <SubmitButton
                     message="Update"
                     validate={!formState.isValid}
-                    // TODO : Loading
-                    loading={false}
+                    loading={editProductLoading || uploadImageLoading}
                   />
+                  {editProductOutput?.editProduct.error && (
+                    <FormError
+                      errorMessage={editProductOutput.editProduct.error}
+                    />
+                  )}
+                  {uploadImageOutput?.uploadImage.error && (
+                    <FormError
+                      errorMessage={uploadImageOutput.uploadImage.error}
+                    />
+                  )}
                 </form>
               </div>
             </Container>

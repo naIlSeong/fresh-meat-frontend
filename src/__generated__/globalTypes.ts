@@ -34,6 +34,14 @@ export interface DeleteUserDto {
   password: string;
 }
 
+export interface EditProductDto {
+  productName?: string | null;
+  description?: string | null;
+  startPrice?: number | null;
+  productId: number;
+  deleteImage?: boolean | null;
+}
+
 export interface EditProgressDto {
   productId: number;
 }

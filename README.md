@@ -24,7 +24,7 @@
   - [x] Add Image
   - [x] Create Bidding
   - [x] Update Bidding
-  - [x] VIEW Button
+  - [x] View Button
   - [x] Upload Product Button
 
   - [ ] Debug : Input value validate
@@ -44,7 +44,7 @@
   - [x] Product Detail **(/product/:id)**
   - [x] Edit Progress
   - [x] Delete Product **(/product/:id/delete)**
-  - [ ] Edit Product **(/product/:id/update)**
+  - [x] Edit Product **(/product/:id/update)**
 
 ---
 
