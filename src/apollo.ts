@@ -6,7 +6,10 @@ const sessionId = Cookies.get("connect.sid");
 export const isLoggedInVar = makeVar(Boolean(sessionId));
 
 const link = createUploadLink({
-  uri: "https://localhost:4000/graphql",
+  uri:
+    process.env.NODE_ENV === "production"
+      ? process.env.DOMAIN
+      : "https://localhost:4000/graphql",
   credentials: "include",
 });
 
