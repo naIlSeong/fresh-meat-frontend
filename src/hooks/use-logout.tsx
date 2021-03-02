@@ -22,7 +22,12 @@ export const useLogout = () => {
     if (ok) {
       isLoggedInVar(false);
       history.push("/");
-      Cookies.remove("connect.sid");
+      Cookies.remove("connect.sid", {
+        domain:
+          process.env.NODE_ENV === "production"
+            ? process.env.DOMAIN
+            : undefined,
+      });
       client.clearStore();
       window.location.reload();
     }
