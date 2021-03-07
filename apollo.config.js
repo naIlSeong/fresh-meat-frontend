@@ -6,7 +6,7 @@ module.exports = {
       name: "fresh-meat-backend",
       url:
         process.env.NODE_ENV === "production"
-          ? process.env.DOMAIN
+          ? process.env.API_DOMAIN
           : "https://localhost:4000/graphql",
       skipSSLValidation: true,
     },
