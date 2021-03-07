@@ -8,7 +8,7 @@ export const isLoggedInVar = makeVar(Boolean(sessionId));
 const link = createUploadLink({
   uri:
     process.env.NODE_ENV === "production"
-      ? process.env.DOMAIN
+      ? process.env.API_DOMAIN
       : "https://localhost:4000/graphql",
   credentials: "include",
 });
