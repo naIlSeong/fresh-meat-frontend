@@ -149,17 +149,19 @@ export const UploadProduct = () => {
     const {
       uploadProduct: { ok, productId },
     } = data;
-    if (ok && productId && image[0]) {
-      uploadImageMutation({
-        variables: {
-          productId,
-          file: image[0],
-        },
-      });
-      setProductId(productId);
-    } else {
-      history.push(`/product/${productId}`);
-      window.scrollTo(0, 0);
+    if (ok && productId) {
+      if (image[0]) {
+        setProductId(productId);
+        uploadImageMutation({
+          variables: {
+            productId,
+            file: image[0],
+          },
+        });
+      } else {
+        history.push(`/product/${productId}`);
+        window.scrollTo(0, 0);
+      }
     }
   };
 
